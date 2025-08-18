@@ -21,7 +21,7 @@
 
     <!-- Header Section -->
     <div class="bg-white shadow-xl rounded-2xl p-6 mb-8 text-center">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">📊 Sales Dashboard</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2"> Sales Dashboard</h1>
         <p class="text-gray-500">Analyze your sales data directly from Google Sheets.</p>
     </div>
 
