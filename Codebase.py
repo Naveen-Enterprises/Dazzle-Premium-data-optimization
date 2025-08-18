@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
+import os
 import io
-import plotly.express as px
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -24,6 +24,7 @@ def load_and_clean_data(sheet_url):
         A cleaned Pandas DataFrame or an empty DataFrame if an error occurs.
     """
     if not sheet_url:
+        st.warning("Please enter a Google Sheets URL.")
         return pd.DataFrame()
         
     # Convert the public sharing URL to a CSV export URL
@@ -97,18 +98,13 @@ def load_and_clean_data(sheet_url):
         return pd.DataFrame()
 
 # --- MAIN PAGE LAYOUT ---
-st.title("🚀 Smart Sales Dashboard")
-st.markdown("A comprehensive tool for analyzing your sales performance and trends.")
+st.title("📊 Interactive Sales Dashboard")
+st.markdown("Analyze your sales data to uncover trends and insights.")
 
-# --- SIDEBAR FOR URL AND FILTERS ---
-with st.sidebar:
-    st.header("1. Data Source")
-    sheet_url = st.text_input("Enter your public Google Sheets URL:", value="")
-    load_button = st.button("Load Data")
-    st.markdown("---")
-    
-    st.header("2. Filters")
-    st.markdown("Select a date range and order status to refine your view.")
+# --- URL INPUT AND LOAD BUTTON ---
+st.sidebar.header("Google Sheets URL")
+sheet_url = st.sidebar.text_input("Enter your public Google Sheets URL:", value="")
+load_button = st.sidebar.button("Load Data")
 
 # Load data only when the button is clicked
 df = pd.DataFrame()
@@ -116,24 +112,28 @@ if load_button and sheet_url:
     df = load_and_clean_data(sheet_url)
 
 if not df.empty:
-    # --- DYNAMIC FILTERS ---
-    with st.sidebar:
-        min_date = df['Date'].min().to_pydatetime()
-        max_date = df['Date'].max().to_pydatetime()
-        date_range = st.slider(
-            "Select a Date Range:",
-            min_value=min_date,
-            max_value=max_date,
-            value=(min_date, max_date),
-            format="YYYY-MM-DD"
-        )
-        
-        all_statuses = ["All"] + sorted(list(df['Status'].unique()))
-        selected_statuses = st.multiselect(
-            "Select Order Status(es):",
-            options=all_statuses,
-            default=["All"]
-        )
+    # --- SIDEBAR FILTERS ---
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Filter Data")
+
+    # Date filter
+    min_date = df['Date'].min().to_pydatetime()
+    max_date = df['Date'].max().to_pydatetime()
+    date_range = st.sidebar.slider(
+        "Select a Date Range:",
+        min_value=min_date,
+        max_value=max_date,
+        value=(min_date, max_date),
+        format="YYYY-MM-DD"
+    )
+    
+    # Status filter
+    all_statuses = ["All"] + sorted(list(df['Status'].unique()))
+    selected_statuses = st.sidebar.multiselect(
+        "Select Order Status(es):",
+        options=all_statuses,
+        default=["All"]
+    )
 
     # --- FILTER THE DATAFRAME BASED ON USER SELECTIONS ---
     filtered_df = df[df['Date'].between(date_range[0], date_range[1])]
@@ -145,7 +145,7 @@ if not df.empty:
         st.warning("No data matches the selected filters. Please adjust your selections.")
     else:
         # --- KEY METRICS (KPIs) ---
-        st.header("Summary of Key Metrics")
+        st.markdown("## 📈 Key Performance Indicators")
         
         fulfilled_orders = filtered_df[filtered_df['Status'] == 'Fulfilled']
         
@@ -153,80 +153,96 @@ if not df.empty:
         total_orders = len(filtered_df)
         fulfilled_count = len(fulfilled_orders)
         avg_order_value = total_revenue / fulfilled_count if fulfilled_count > 0 else 0
-        
-        # Delta calculation for a more insightful metric
-        previous_period_df = df[df['Date'] < date_range[0]]
-        previous_revenue = previous_period_df[previous_period_df['Status'] == 'Fulfilled']['Price'].sum()
-        revenue_delta = total_revenue - previous_revenue if previous_revenue > 0 else 0
-        
+
         col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.metric("Total Revenue (Fulfilled)", f"${total_revenue:,.2f}", delta=f"{revenue_delta:,.2f} from previous period")
-        with col2:
-            st.metric("Total Orders", f"{total_orders:,}")
-        with col3:
-            st.metric("Average Order Value", f"${avg_order_value:,.2f}")
-            
+        col1.metric("Total Revenue (Fulfilled)", f"${total_revenue:,.2f}")
+        col2.metric("Total Orders", f"{total_orders:,}")
+        col3.metric("Average Order Value", f"${avg_order_value:,.2f}")
+
         st.markdown("---")
-        
-        # --- VISUALIZATIONS ---
-        st.header("Sales Trends & Breakdown")
-        
-        col_chart1, col_chart2 = st.columns(2)
-        
-        with col_chart1:
-            st.subheader("Daily Revenue Trend")
-            daily_revenue = filtered_df.groupby(filtered_df['Date'].dt.date)['Price'].sum().reset_index()
-            fig = px.line(daily_revenue, x='Date', y='Price', title="Revenue Over Time", markers=True)
-            st.plotly_chart(fig, use_container_width=True)
-            
-        with col_chart2:
+
+        # --- VISUALIZATIONS IN COLUMNS ---
+        st.markdown("## 📊 Sales Trends")
+        left_col, right_col = st.columns(2)
+
+        # --- 1. Daily Orders (Line Chart) ---
+        with left_col:
             st.subheader("Daily Order Volume")
             daily_orders = filtered_df.groupby(filtered_df['Date'].dt.date).size().reset_index(name='Order Count')
-            fig = px.bar(daily_orders, x='Date', y='Order Count', title="Order Volume Over Time")
-            st.plotly_chart(fig, use_container_width=True)
-            
+            st.line_chart(daily_orders, x='Date', y='Order Count')
+
+        # --- 2. Daily Revenue (Line Chart) ---
+        with right_col:
+            st.subheader("Daily Revenue")
+            daily_revenue = filtered_df.groupby(filtered_df['Date'].dt.date)['Price'].sum().reset_index()
+            st.line_chart(daily_revenue, x='Date', y='Price')
+        
         st.markdown("---")
         
-        col_chart3, col_chart4 = st.columns(2)
-        
-        with col_chart3:
+        st.markdown("## 📉 Sales Breakdown")
+        left_col_2, right_col_2 = st.columns(2)
+
+        # --- 3. Orders by Status (Donut Chart) ---
+        # Note: Streamlit's native pie chart doesn't support a 'hole' for a donut chart.
+        # We will use a bar chart instead to clearly show the breakdown.
+        with left_col_2:
             st.subheader("Order Status Breakdown")
             status_counts = filtered_df['Status'].value_counts().reset_index()
             status_counts.columns = ['Status', 'Count']
-            fig = px.pie(status_counts, values='Count', names='Status', title="Order Status")
-            st.plotly_chart(fig, use_container_width=True)
-            
-        with col_chart4:
-            st.subheader("Top Customers by Spending")
+            st.bar_chart(status_counts.set_index('Status'))
+
+        # --- 4. Top 10 Customers (Bar Chart) ---
+        with right_col_2:
+            st.subheader("Top 10 Customers by Spending")
             top_customers = fulfilled_orders.groupby("Customer Name")["Price"].sum().nlargest(10).reset_index()
-            fig = px.bar(top_customers, x='Price', y='Customer Name', orientation='h', title="Top 10 Customers")
-            st.plotly_chart(fig, use_container_width=True)
+            st.bar_chart(top_customers.sort_values('Price').set_index('Customer Name'))
         
         st.markdown("---")
 
-        # --- ADVANCED INSIGHTS ---
-        st.header("Deeper Insights")
-        
-        col_insight1, col_insight2 = st.columns(2)
-        
-        with col_insight1:
-            st.subheader("Sales by Day of the Week")
-            day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            sales_by_day = filtered_df.groupby(filtered_df['Date'].dt.day_name())['Price'].sum().reindex(day_order).reset_index()
-            fig = px.bar(sales_by_day, x='Date', y='Price', title="Total Revenue by Day of the Week")
-            st.plotly_chart(fig, use_container_width=True)
+        st.markdown("## 🌍 Geographic & Product Insights")
+        left_col_3, right_col_3 = st.columns(2)
 
-        with col_insight2:
-            st.subheader("Top Customers Treemap")
-            top_customers = fulfilled_orders.groupby("Customer Name")["Price"].sum().nlargest(10).reset_index()
-            fig = px.treemap(top_customers, path=[px.Constant("Top Customers"), 'Customer Name'], values='Price', title="Top Customers Treemap")
-            st.plotly_chart(fig, use_container_width=True)
-            
+        # --- 5. Sales by Product Category (Bar Chart) ---
+        if 'Product Category' in filtered_df.columns:
+            with left_col_3:
+                st.subheader("Sales by Product Category")
+                category_sales = filtered_df.groupby('Product Category')['Price'].sum().sort_values(ascending=False).reset_index()
+                st.bar_chart(category_sales.set_index('Product Category'))
+        else:
+            with left_col_3:
+                st.info("The 'Product Category' column is not available in the dataset.")
+
+        # --- 6. Sales by City (Map) ---
+        # Note: Streamlit's native map functions require latitude/longitude,
+        # and do not support dynamic scatter maps like Plotly.
+        if 'City' in filtered_df.columns:
+            with right_col_3:
+                st.subheader("Sales by City")
+                st.info("A map cannot be generated using Streamlit's native components without latitude and longitude data.")
+                # Fallback to showing raw city data
+                city_sales = filtered_df.groupby('City')['Price'].sum().reset_index()
+                st.dataframe(city_sales)
+        else:
+            with right_col_3:
+                st.info("The 'City' column is not available in the dataset. A map cannot be generated.")
+
+
         st.markdown("---")
         
-        # --- RAW DATA PREVIEW ---
-        st.header("Raw Data Preview")
-        with st.expander("Click to view the data table"):
+        # --- 7. Weekly Order Patterns (Heatmap) ---
+        # Note: Streamlit has no native heatmap component.
+        # Displaying the raw data in a table is the best alternative.
+        st.subheader("Weekly Order Patterns")
+        filtered_df["DayOfWeek"] = filtered_df["Date"].dt.day_name()
+        filtered_df["WeekOfMonth"] = filtered_df["Date"].dt.isocalendar().week
+        
+        heatmap_data = filtered_df.groupby(["DayOfWeek", "WeekOfMonth"]).size().unstack(fill_value=0)
+        # Reorder days of the week
+        day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        heatmap_data = heatmap_data.reindex(day_order)
+        
+        st.dataframe(heatmap_data)
+
+        # --- Raw Data Preview ---
+        with st.expander("📄 View Raw Data"):
             st.dataframe(filtered_df)
