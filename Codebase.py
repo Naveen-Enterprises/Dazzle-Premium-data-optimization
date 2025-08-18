@@ -43,7 +43,7 @@
     <div id="dashboard" class="hidden">
         
         <!-- Key Performance Indicators (KPIs) -->
-        <h2 class="text-2xl font-semibold text-gray-700 mb-4">📈 Key Metrics</h2>
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4"> Key Metrics</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-emerald-500">
                 <p class="text-gray-500">Total Revenue</p>
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Sales Trends Charts -->
-        <h2 class="text-2xl font-semibold text-gray-700 mb-4">📊 Sales Trends</h2>
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4"> Sales Trends</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="bg-white p-6 rounded-2xl shadow-lg">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Daily Revenue</h3>
@@ -73,7 +73,7 @@
         </div>
 
         <!-- Sales Breakdown Charts -->
-        <h2 class="text-2xl font-semibold text-gray-700 mb-4">📉 Sales Breakdown</h2>
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4"> Sales Breakdown</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="bg-white p-6 rounded-2xl shadow-lg">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Order Status Breakdown</h3>
