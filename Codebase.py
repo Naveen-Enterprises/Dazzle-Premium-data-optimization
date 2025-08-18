@@ -24,10 +24,11 @@ def load_and_clean_data(sheet_url):
         A cleaned Pandas DataFrame or an empty DataFrame if an error occurs.
     """
     if not sheet_url:
+        st.warning("Please enter a public Google Sheets URL in the sidebar to load your data.")
         return pd.DataFrame()
         
-    # Convert the public sharing URL to a CSV export URL
     try:
+        # Convert the public sharing URL to a CSV export URL
         url_parts = sheet_url.split('/d/')
         if len(url_parts) < 2:
             st.error("Invalid Google Sheets URL format. Please provide a full public URL.")
@@ -40,9 +41,8 @@ def load_and_clean_data(sheet_url):
             
         csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id_part}/export?format=csv&gid={gid_part}"
         
-        # Load data from the generated CSV URL
         df = pd.read_csv(csv_url)
-        st.info(f"Raw data loaded. Total rows: {len(df)}")
+        st.success(f"Raw data loaded from Google Sheets. Total rows: {len(df)}")
 
     except Exception as e:
         st.error(f"Error loading data from Google Sheets: {e}")
@@ -50,15 +50,15 @@ def load_and_clean_data(sheet_url):
         return pd.DataFrame()
 
     if df.empty:
-        st.warning("The Google Sheet is empty.")
+        st.warning("The Google Sheet is empty or could not be read.")
         return df
 
-    # --- Step 2: Data Cleaning & Preparation ---
+    # --- Data Cleaning & Preparation ---
     try:
-        # Clean column names by removing leading/trailing whitespace
+        # Standardize column names
         df.columns = df.columns.str.strip()
         
-        # Ensure all required columns exist before proceeding
+        # Check for required columns
         required_cols = ['Date', 'Price', 'Status', 'Customer Name']
         
         if not all(col in df.columns for col in required_cols):
@@ -68,27 +68,27 @@ def load_and_clean_data(sheet_url):
         # Drop rows where all values are empty
         df.dropna(how='all', inplace=True)
         
-        # Use forward fill to fill empty cells in 'Date' column
+        # Forward fill the 'Date' column to handle merged cells
         df['Date'].ffill(inplace=True)
         
-        # Convert 'Date' column to datetime objects
+        # Convert 'Date' to datetime objects
         df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
 
-        # Clean the 'Price' column: remove '$', commas, and convert to numeric
+        # Clean and convert 'Price' column to numeric
         if df['Price'].dtype == 'object':
             df['Price'] = df['Price'].str.replace('$', '', regex=False).str.replace(',', '', regex=False)
         df['Price'] = pd.to_numeric(df['Price'], errors='coerce')
 
-        # Standardize the 'Status' column (e.g., trim whitespace, capitalize)
+        # Standardize 'Status' column (trim whitespace, capitalize first letter)
         df['Status'] = df['Status'].str.strip().str.title()
         
-        # Drop rows where essential data is missing after cleaning
+        # Drop rows with missing essential data after cleaning
         df.dropna(subset=['Date', 'Price', 'Status'], inplace=True)
         
-        # Sort by date to ensure proper plotting
+        # Sort by date for proper time series analysis
         df.sort_values(by='Date', inplace=True)
 
-        st.success(f"Data cleaned. Valid order rows: {len(df)}")
+        st.success(f"Data successfully cleaned. Valid order rows: {len(df)}")
         return df
     except Exception as e:
         st.error(f"An error occurred during data processing: {e}")
