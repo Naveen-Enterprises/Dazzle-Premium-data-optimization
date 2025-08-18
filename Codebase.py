@@ -42,6 +42,9 @@ def load_and_clean_data(uploaded_file=None):
         return df
 
     # --- Step 2: Data Cleaning & Preparation ---
+    # Display the initial count of rows
+    st.info(f"Raw file contains {len(df)} rows.")
+
     try:
         # Clean column names by removing leading/trailing whitespace
         df.columns = df.columns.str.strip()
@@ -92,6 +95,7 @@ df = load_and_clean_data(uploaded_file)
 
 if not df.empty:
     st.success("Data loaded and processed successfully!")
+    st.info(f"The cleaned data contains {len(df)} valid order rows.")
 
     # Add filters to the sidebar based on loaded data
     with st.sidebar:
