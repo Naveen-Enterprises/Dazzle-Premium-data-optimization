@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import io
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -11,40 +12,51 @@ st.set_page_config(
 
 # --- DATA LOADING AND CLEANING ---
 @st.cache_data
-def load_and_clean_data(uploaded_file=None):
+def load_and_clean_data(sheet_url):
     """
-    Loads data from a CSV, either from an upload or a local file,
-    and performs necessary cleaning and transformations.
+    Loads data directly from a public Google Sheets URL and performs
+    necessary cleaning and transformations.
     
     Args:
-        uploaded_file: The file object from st.file_uploader.
+        sheet_url: The public Google Sheets URL.
         
     Returns:
         A cleaned Pandas DataFrame or an empty DataFrame if an error occurs.
     """
-    df = None
-    
-    # Check if a file is uploaded, otherwise, use a fallback local file.
-    if uploaded_file is not None:
-        try:
-            df = pd.read_csv(uploaded_file)
-        except Exception as e:
-            st.error(f"Error loading uploaded file: {e}")
+    if not sheet_url:
+        st.warning("Please enter a Google Sheets URL.")
+        return pd.DataFrame()
+        
+    # Convert the public sharing URL to a CSV export URL
+    try:
+        # Example: https://docs.google.com/spreadsheets/d/1Xy_Jd2g9.../edit#gid=123
+        # Becomes: https://docs.google.com/spreadsheets/d/1Xy_Jd2g9.../export?format=csv&gid=123
+        url_parts = sheet_url.split('/d/')
+        if len(url_parts) < 2:
+            st.error("Invalid Google Sheets URL format. Please provide a full public URL.")
             return pd.DataFrame()
-    elif os.path.exists("July - Sheet1.csv"):
-        st.info("No file uploaded. Loading local data from 'July - Sheet1.csv'.")
-        df = pd.read_csv("July - Sheet1.csv")
-    else:
-        st.error("No data file found. Please upload a CSV file to begin.")
+        
+        sheet_id_part = url_parts[1].split('/edit')[0]
+        gid_part = "0"
+        if "gid=" in sheet_url:
+            gid_part = sheet_url.split('gid=')[1].split('&')[0]
+            
+        csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id_part}/export?format=csv&gid={gid_part}"
+        
+        # Load data from the generated CSV URL
+        df = pd.read_csv(csv_url)
+        st.info(f"Raw data loaded. Total rows: {len(df)}")
+
+    except Exception as e:
+        st.error(f"Error loading data from Google Sheets: {e}")
+        st.error("Please ensure the sheet is publicly accessible (File > Share > Anyone with the link).")
         return pd.DataFrame()
 
     if df.empty:
-        st.warning("The uploaded file is empty.")
+        st.warning("The Google Sheet is empty.")
         return df
 
     # --- Step 2: Data Cleaning & Preparation ---
-    st.info(f"Raw data loaded. Total rows: {len(df)}")
-    
     try:
         # Clean column names by removing leading/trailing whitespace
         df.columns = df.columns.str.strip()
@@ -53,7 +65,7 @@ def load_and_clean_data(uploaded_file=None):
         required_cols = ['Date', 'Price', 'Status', 'Customer Name']
         
         if not all(col in df.columns for col in required_cols):
-            st.error(f"The uploaded file must contain the following columns: {', '.join(required_cols)}")
+            st.error(f"The sheet must contain the following columns: {', '.join(required_cols)}")
             return pd.DataFrame()
         
         # Drop rows where all values are empty, which commonly appear in CSV exports
@@ -85,42 +97,43 @@ def load_and_clean_data(uploaded_file=None):
         st.error(f"An error occurred during data processing: {e}")
         return pd.DataFrame()
 
-# --- SIDEBAR FOR FILE UPLOAD AND FILTERS ---
-with st.sidebar:
-    st.header("Upload & Filter Data")
-    uploaded_file = st.file_uploader("Upload your sales CSV file", type="csv")
-    
-    st.markdown("---")
-    st.subheader("Filter Data")
-
 # --- MAIN PAGE LAYOUT ---
 st.title("📊 Interactive Sales Dashboard")
 st.markdown("Analyze your sales data to uncover trends and insights.")
 
-# Load the data using the function
-df = load_and_clean_data(uploaded_file)
+# --- URL INPUT AND LOAD BUTTON ---
+st.sidebar.header("Google Sheets URL")
+sheet_url = st.sidebar.text_input("Enter your public Google Sheets URL:", value="")
+load_button = st.sidebar.button("Load Data")
+
+# Load data only when the button is clicked
+df = pd.DataFrame()
+if load_button and sheet_url:
+    df = load_and_clean_data(sheet_url)
 
 if not df.empty:
-    # Add filters to the sidebar based on loaded data
-    with st.sidebar:
-        # Date filter
-        min_date = df['Date'].min().to_pydatetime()
-        max_date = df['Date'].max().to_pydatetime()
-        date_range = st.slider(
-            "Select a Date Range:",
-            min_value=min_date,
-            max_value=max_date,
-            value=(min_date, max_date),
-            format="YYYY-MM-DD"
-        )
-        
-        # Status filter
-        all_statuses = ["All"] + sorted(list(df['Status'].unique()))
-        selected_statuses = st.multiselect(
-            "Select Order Status(es):",
-            options=all_statuses,
-            default=["All"]
-        )
+    # --- SIDEBAR FILTERS ---
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Filter Data")
+
+    # Date filter
+    min_date = df['Date'].min().to_pydatetime()
+    max_date = df['Date'].max().to_pydatetime()
+    date_range = st.sidebar.slider(
+        "Select a Date Range:",
+        min_value=min_date,
+        max_value=max_date,
+        value=(min_date, max_date),
+        format="YYYY-MM-DD"
+    )
+    
+    # Status filter
+    all_statuses = ["All"] + sorted(list(df['Status'].unique()))
+    selected_statuses = st.sidebar.multiselect(
+        "Select Order Status(es):",
+        options=all_statuses,
+        default=["All"]
+    )
 
     # --- FILTER THE DATAFRAME BASED ON USER SELECTIONS ---
     filtered_df = df[df['Date'].between(date_range[0], date_range[1])]
