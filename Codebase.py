@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 st.set_page_config(page_title="July Orders Dashboard", layout="wide")
 
@@ -23,7 +21,6 @@ df = load_data(uploaded)
 
 if not df.empty:
     st.success("Data loaded successfully!")
-    st.dataframe(df.head())
 
     # --- Ensure expected columns exist ---
     expected_columns = ["Date", "Price", "Quantity", "Category", "Product"]
@@ -69,13 +66,15 @@ if not df.empty:
         top_products = df.groupby("Product")["Revenue"].sum().sort_values(ascending=False).head(10)
         st.bar_chart(top_products)
 
-    # --- Heatmap: Orders by Day of Week vs Week of Month ---
+    # --- Heatmap-style Orders by Day of Week vs Week of Month ---
     if "Date" in df.columns:
-        st.subheader("Order Patterns (Heatmap)")
+        st.subheader("Order Patterns (Heatmap Style)")
         df["DayOfWeek"] = df["Date"].dt.day_name()
         df["WeekOfMonth"] = df["Date"].dt.day.apply(lambda d: (d - 1) // 7 + 1)
         heatmap_data = df.groupby(["WeekOfMonth", "DayOfWeek"]).size().unstack(fill_value=0)
 
-        fig, ax = plt.subplots(figsize=(8, 5))
-        sns.heatmap(heatmap_data, cmap="Blues", annot=True, fmt="d", ax=ax)
-        st.pyplot(fig)
+        # Convert to long format for stacked bar chart
+        heatmap_long = heatmap_data.reset_index().melt(id_vars="WeekOfMonth", var_name="DayOfWeek", value_name="Orders")
+        pivot_for_chart = heatmap_long.pivot(index="WeekOfMonth", columns="DayOfWeek", values="Orders")
+
+        st.bar_chart(pivot_for_chart)
