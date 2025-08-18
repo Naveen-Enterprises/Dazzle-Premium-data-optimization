@@ -42,18 +42,17 @@ def load_and_clean_data(uploaded_file=None):
         return df
 
     # --- Step 2: Data Cleaning & Preparation ---
-    # Ensure all required columns exist before proceeding
-    required_cols = ['Date', 'Price', 'Status', 'Customer Name']
-    
-    # Add optional columns for new visualizations
-    optional_cols = ['Product Category', 'City']
-    all_cols = required_cols + optional_cols
-    
-    if not all(col in df.columns for col in required_cols):
-        st.error(f"The uploaded file must contain the following columns: {', '.join(required_cols)}")
-        return pd.DataFrame()
-
     try:
+        # Clean column names by removing leading/trailing whitespace
+        df.columns = df.columns.str.strip()
+        
+        # Ensure all required columns exist before proceeding
+        required_cols = ['Date', 'Price', 'Status', 'Customer Name']
+        
+        if not all(col in df.columns for col in required_cols):
+            st.error(f"The uploaded file must contain the following columns: {', '.join(required_cols)}")
+            return pd.DataFrame()
+        
         # Convert 'Date' column to datetime objects
         df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
 
