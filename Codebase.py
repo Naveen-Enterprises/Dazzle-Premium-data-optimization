@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 import os
 
 # --- PAGE CONFIGURATION ---
@@ -150,31 +149,13 @@ if not df.empty:
         with left_col:
             st.subheader("Daily Order Volume")
             daily_orders = filtered_df.groupby(filtered_df['Date'].dt.date).size().reset_index(name='Order Count')
-            fig_daily_orders = px.line(
-                daily_orders,
-                x='Date',
-                y='Order Count',
-                title="Orders per Day",
-                markers=True,
-                labels={'Order Count': 'Number of Orders'}
-            )
-            fig_daily_orders.update_layout(xaxis_title="Date", yaxis_title="Number of Orders")
-            st.plotly_chart(fig_daily_orders, use_container_width=True)
+            st.line_chart(daily_orders, x='Date', y='Order Count')
 
         # --- 2. Daily Revenue (Line Chart) ---
         with right_col:
             st.subheader("Daily Revenue")
             daily_revenue = filtered_df.groupby(filtered_df['Date'].dt.date)['Price'].sum().reset_index()
-            fig_daily_revenue = px.line(
-                daily_revenue,
-                x='Date',
-                y='Price',
-                title="Revenue per Day",
-                markers=True,
-                labels={'Price': 'Total Revenue ($)'}
-            )
-            fig_daily_revenue.update_layout(xaxis_title="Date", yaxis_title="Revenue ($)")
-            st.plotly_chart(fig_daily_revenue, use_container_width=True)
+            st.line_chart(daily_revenue, x='Date', y='Price')
         
         st.markdown("---")
         
@@ -182,40 +163,19 @@ if not df.empty:
         left_col_2, right_col_2 = st.columns(2)
 
         # --- 3. Orders by Status (Donut Chart) ---
+        # Note: Streamlit's native pie chart doesn't support a 'hole' for a donut chart.
+        # We will use a bar chart instead to clearly show the breakdown.
         with left_col_2:
             st.subheader("Order Status Breakdown")
             status_counts = filtered_df['Status'].value_counts().reset_index()
             status_counts.columns = ['Status', 'Count']
-            fig_status = px.pie(
-                status_counts,
-                names='Status',
-                values='Count',
-                title="Proportion of Order Statuses",
-                hole=0.4,
-                color_discrete_map={
-                    'Fulfilled': 'green',
-                    'Cancelled': 'red',
-                    'High Risk Order': 'orange',
-                    'Returns': 'blue'
-                }
-            )
-            st.plotly_chart(fig_status, use_container_width=True)
+            st.bar_chart(status_counts.set_index('Status'))
 
         # --- 4. Top 10 Customers (Bar Chart) ---
         with right_col_2:
             st.subheader("Top 10 Customers by Spending")
             top_customers = fulfilled_orders.groupby("Customer Name")["Price"].sum().nlargest(10).reset_index()
-            fig_customers = px.bar(
-                top_customers.sort_values('Price', ascending=True),
-                x='Price',
-                y='Customer Name',
-                orientation='h',
-                title="Top 10 Customers (Fulfilled Orders)",
-                labels={'Price': 'Total Spent ($)', 'Customer Name': 'Customer'},
-                color='Price',
-                color_continuous_scale=px.colors.sequential.Teal
-            )
-            st.plotly_chart(fig_customers, use_container_width=True)
+            st.bar_chart(top_customers.sort_values('Price').set_index('Customer Name'))
         
         st.markdown("---")
 
@@ -227,39 +187,21 @@ if not df.empty:
             with left_col_3:
                 st.subheader("Sales by Product Category")
                 category_sales = filtered_df.groupby('Product Category')['Price'].sum().sort_values(ascending=False).reset_index()
-                fig_category = px.bar(
-                    category_sales,
-                    x='Product Category',
-                    y='Price',
-                    title="Revenue per Product Category",
-                    labels={'Price': 'Total Revenue ($)'}
-                )
-                st.plotly_chart(fig_category, use_container_width=True)
+                st.bar_chart(category_sales.set_index('Product Category'))
         else:
             with left_col_3:
                 st.info("The 'Product Category' column is not available in the dataset.")
 
-        # --- 6. Sales by City (Scatter Map) ---
+        # --- 6. Sales by City (Map) ---
+        # Note: Streamlit's native map functions require latitude/longitude,
+        # and do not support dynamic scatter maps like Plotly.
         if 'City' in filtered_df.columns:
             with right_col_3:
                 st.subheader("Sales by City")
+                st.info("A map cannot be generated using Streamlit's native components without latitude and longitude data.")
+                # Fallback to showing raw city data
                 city_sales = filtered_df.groupby('City')['Price'].sum().reset_index()
-                # Create a simple placeholder for latitude/longitude if not present
-                city_sales['lat'] = 0
-                city_sales['lon'] = 0
-                fig_map = px.scatter_mapbox(
-                    city_sales,
-                    lat="lat",
-                    lon="lon",
-                    size="Price",
-                    hover_name="City",
-                    hover_data={"Price": True},
-                    zoom=1,
-                    height=400,
-                    title="Total Revenue by City"
-                )
-                fig_map.update_layout(mapbox_style="carto-positron")
-                st.plotly_chart(fig_map, use_container_width=True)
+                st.dataframe(city_sales)
         else:
             with right_col_3:
                 st.info("The 'City' column is not available in the dataset. A map cannot be generated.")
@@ -267,7 +209,9 @@ if not df.empty:
 
         st.markdown("---")
         
-        # --- 7. Heatmap of Orders ---
+        # --- 7. Weekly Order Patterns (Heatmap) ---
+        # Note: Streamlit has no native heatmap component.
+        # Displaying the raw data in a table is the best alternative.
         st.subheader("Weekly Order Patterns")
         filtered_df["DayOfWeek"] = filtered_df["Date"].dt.day_name()
         filtered_df["WeekOfMonth"] = filtered_df["Date"].dt.isocalendar().week
@@ -277,13 +221,7 @@ if not df.empty:
         day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         heatmap_data = heatmap_data.reindex(day_order)
         
-        fig_heatmap = px.imshow(
-            heatmap_data,
-            labels=dict(x="Week of the Year", y="Day of Week", color="Number of Orders"),
-            title="Heatmap of Order Volume by Day and Week",
-            color_continuous_scale="Viridis"
-        )
-        st.plotly_chart(fig_heatmap, use_container_width=True)
+        st.dataframe(heatmap_data)
 
         # --- Raw Data Preview ---
         with st.expander("📄 View Raw Data"):
