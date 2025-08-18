@@ -217,3 +217,9 @@ if not df.empty:
         with st.expander("📄 Raw Data Table"):
             st.header("Raw Data Preview")
             st.dataframe(filtered_df)
+```
+<file path="requirements.txt">
+plotly
+pandas
+streamlit
+</fi
