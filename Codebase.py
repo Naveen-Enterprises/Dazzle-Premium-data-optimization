@@ -1,1 +1,174 @@
 
+import streamlit as st
+import pandas as pd
+import numpy as np
+import altair as alt
+
+st.set_page_config(page_title="July 2025 Orders Dashboard", layout="wide")
+
+@st.cache_data
+def load_data(uploaded=None):
+    if uploaded is not None:
+        df = pd.read_csv(uploaded, parse_dates=["Date"])
+    else:
+        df = pd.read_csv("july_orders_2025.csv", parse_dates=["Date"])
+    # Normalize
+    df["Status"] = df["Status"].astype(str).str.strip().str.upper().replace({
+        "HIGH RISK ORDER": "HIGH RISK"
+    })
+    df["Price"] = pd.to_numeric(df["Price"], errors="coerce")
+    df["Day"] = pd.to_datetime(df["Date"]).dt.day_name()
+    return df
+
+def business_metrics(df):
+    total_orders = len(df)
+    fulfilled = df[df["Status"] == "FULFILLED"]
+    cancelled = df[df["Status"] == "CANCELLED"]
+    returns = df[df["Status"] == "RETURNS"]
+    highrisk = df[df["Status"] == "HIGH RISK"]
+
+    gross_revenue = fulfilled["Price"].sum()
+    aov = fulfilled["Price"].mean() if len(fulfilled) else 0.0
+    cancel_rate = len(cancelled) / total_orders if total_orders else 0.0
+    return_rate = len(returns) / total_orders if total_orders else 0.0
+    highrisk_rate = len(highrisk) / total_orders if total_orders else 0.0
+
+    return {
+        "total_orders": total_orders,
+        "fulfilled_orders": len(fulfilled),
+        "cancelled_orders": len(cancelled),
+        "returns": len(returns),
+        "high_risk_orders": len(highrisk),
+        "gross_revenue": gross_revenue,
+        "aov": aov,
+        "cancel_rate": cancel_rate,
+        "return_rate": return_rate,
+        "highrisk_rate": highrisk_rate,
+    }
+
+st.title("📦 July 2025 Orders Dashboard")
+st.caption("Interactive Streamlit app to visualize your July 2025 order data.")
+
+# Sidebar
+st.sidebar.header("Filters")
+uploaded = st.sidebar.file_uploader("Upload CSV (optional)", type=["csv"])
+df = load_data(uploaded)
+
+# Date filter
+min_date, max_date = df["Date"].min(), df["Date"].max()
+date_range = st.sidebar.date_input("Date range", (min_date, max_date), min_value=min_date, max_value=max_date)
+if isinstance(date_range, tuple):
+    start_date, end_date = date_range
+else:
+    start_date, end_date = date_range, date_range
+mask = (df["Date"] >= pd.to_datetime(start_date)) & (df["Date"] <= pd.to_datetime(end_date))
+df = df.loc[mask].copy()
+
+# Status multiselect
+statuses = sorted(df["Status"].unique().tolist())
+selected_status = st.sidebar.multiselect("Statuses", statuses, default=statuses)
+df = df[df["Status"].isin(selected_status)]
+
+# Metrics
+m = business_metrics(df)
+c1,c2,c3,c4,c5,c6 = st.columns(6)
+c1.metric("Total Orders", m["total_orders"])
+c2.metric("Fulfilled", m["fulfilled_orders"])
+c3.metric("Cancelled", m["cancelled_orders"])
+c4.metric("Returns", m["returns"])
+c5.metric("High Risk", m["high_risk_orders"])
+c6.metric("Gross Revenue", f"${m['gross_revenue']:,.2f}")
+st.divider()
+
+# 1) Daily revenue (Fulfilled only)
+daily_rev = (df[df["Status"]=="FULFILLED"]
+             .groupby("Date", as_index=False)["Price"].sum()
+             .rename(columns={"Price":"Revenue"}))
+line_rev = alt.Chart(daily_rev).mark_line(point=True).encode(
+    x=alt.X("Date:T", title="Date"),
+    y=alt.Y("Revenue:Q", title="Daily Revenue (Fulfilled)"),
+    tooltip=["Date:T","Revenue:Q"]
+).properties(title="Daily Revenue (Fulfilled Only)")
+st.altair_chart(line_rev, use_container_width=True)
+
+# 2) Orders by status over time (stacked)
+per_day_status = (df.groupby(["Date","Status"], as_index=False)["Order"].count()
+                    .rename(columns={"Order":"Count"}))
+stacked = alt.Chart(per_day_status).mark_bar().encode(
+    x=alt.X("Date:T", title="Date"),
+    y=alt.Y("Count:Q"),
+    color=alt.Color("Status:N"),
+    tooltip=["Date:T","Status:N","Count:Q"]
+).properties(title="Orders by Status per Day")
+st.altair_chart(stacked, use_container_width=True)
+
+# 3) Status distribution (donut)
+by_status = df.groupby("Status", as_index=False)["Order"].count().rename(columns={"Order":"Count"})
+donut = alt.Chart(by_status).mark_arc(innerRadius=60).encode(
+    theta="Count:Q",
+    color="Status:N",
+    tooltip=["Status:N","Count:Q"]
+).properties(title="Status Distribution")
+st.altair_chart(donut, use_container_width=True)
+
+# 4) Top customers by fulfilled revenue
+fulfilled = df[df["Status"]=="FULFILLED"]
+top_customers = (fulfilled.groupby("Customer Name", as_index=False)["Price"].sum()
+                 .sort_values("Price", ascending=False).head(10))
+bars = alt.Chart(top_customers).mark_bar().encode(
+    x=alt.X("Price:Q", title="Revenue"),
+    y=alt.Y("Customer Name:N", sort="-x", title="Customer"),
+    tooltip=["Customer Name:N","Price:Q"]
+).properties(title="Top 10 Customers by Revenue (Fulfilled)")
+st.altair_chart(bars, use_container_width=True)
+
+# 5) Order value distribution (histogram, fulfilled only)
+hist = alt.Chart(fulfilled).mark_bar().encode(
+    x=alt.X("Price:Q", bin=alt.Bin(maxbins=20), title="Order Value"),
+    y=alt.Y("count()", title="Orders"),
+    tooltip=[alt.Tooltip("count()", title="Orders")]
+).properties(title="Distribution of Fulfilled Order Values")
+st.altair_chart(hist, use_container_width=True)
+
+# 6) Cumulative revenue over time (fulfilled only)
+daily_rev_sorted = daily_rev.sort_values("Date").copy()
+daily_rev_sorted["Cumulative"] = daily_rev_sorted["Revenue"].cumsum()
+cum_line = alt.Chart(daily_rev_sorted).mark_line(point=True).encode(
+    x="Date:T",
+    y=alt.Y("Cumulative:Q", title="Cumulative Revenue"),
+    tooltip=["Date:T","Cumulative:Q"]
+).properties(title="Cumulative Revenue (Fulfilled Only)")
+st.altair_chart(cum_line, use_container_width=True)
+
+# 7) Orders heatmap by weekday and week-of-month
+df["WeekOfMonth"] = df["Date"].dt.day.map(lambda d: (d-1)//7 + 1)
+heat_data = df.groupby([df["Date"].dt.day_name(), "WeekOfMonth"], as_index=False)["Order"].count()
+heat_data = heat_data.rename(columns={"Date":"Day","Order":"Count"})
+heatmap = alt.Chart(heat_data).mark_rect().encode(
+    x=alt.X("WeekOfMonth:O", title="Week of Month"),
+    y=alt.Y("Date:T", title=None, axis=alt.Axis(labels=False))  # placeholder to avoid confusion
+)
+# Replace with correct encodings:
+heatmap = alt.Chart(heat_data).mark_rect().encode(
+    x=alt.X("WeekOfMonth:O", title="Week of Month"),
+    y=alt.Y("Date_day:N", title="Day of Week", sort=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]),
+    color=alt.Color("Count:Q"),
+    tooltip=[alt.Tooltip("Date_day:N", title="Day"), "WeekOfMonth:O", "Count:Q"]
+).transform_calculate(
+    Date_day="datum['Date_day']"
+)
+# Create a proper field for day name
+heat_data = heat_data.rename(columns={"Date":"Day"})
+heat_data["Date_day"] = heat_data["Day"]
+heatmap = alt.Chart(heat_data).mark_rect().encode(
+    x=alt.X("WeekOfMonth:O", title="Week of Month"),
+    y=alt.Y("Date_day:N", title="Day of Week", sort=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]),
+    color=alt.Color("Count:Q"),
+    tooltip=[alt.Tooltip("Date_day:N", title="Day"), "WeekOfMonth:O", "Count:Q"]
+).properties(title="Orders Heatmap: Day of Week vs Week of Month")
+st.altair_chart(heatmap, use_container_width=True)
+
+# 8) Table view
+st.subheader("Raw Data")
+st.dataframe(df.sort_values("Date"))
+
