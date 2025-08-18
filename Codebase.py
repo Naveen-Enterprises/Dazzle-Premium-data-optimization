@@ -9,8 +9,8 @@ st.set_page_config(page_title="July Orders Dashboard", layout="wide")
 def load_data(uploaded_file=None):
     if uploaded_file is not None:
         return pd.read_csv(uploaded_file)
-    elif os.path.exists("july_orders_2025.csv"):
-        return pd.read_csv("july_orders_2025.csv")
+    elif os.path.exists("July - Sheet1.csv"):
+        return pd.read_csv("July - Sheet1.csv")
     else:
         st.error("No data file found. Please upload a CSV.")
         return pd.DataFrame()
@@ -23,7 +23,7 @@ if not df.empty:
     st.success("Data loaded successfully!")
 
     # --- Ensure expected columns exist ---
-    expected_columns = ["Date", "Price", "Quantity", "Category", "Product"]
+    expected_columns = ["Date", "Day", "Order", "Customer Name", "Status", "Price"]
     for col in expected_columns:
         if col not in df.columns:
             st.warning(f"Column '{col}' not found in the dataset. Some charts may not work.")
@@ -34,13 +34,7 @@ if not df.empty:
 
     # --- Clean numeric columns ---
     if "Price" in df.columns:
-        df["Price"] = pd.to_numeric(df["Price"], errors="coerce")
-    if "Quantity" in df.columns:
-        df["Quantity"] = pd.to_numeric(df["Quantity"], errors="coerce")
-
-    # --- Add Revenue column ---
-    if "Price" in df.columns and "Quantity" in df.columns:
-        df["Revenue"] = df["Price"] * df["Quantity"]
+        df["Price"] = pd.to_numeric(df["Price"].str.replace('$','').str.replace(',',''), errors="coerce")
 
     # --- Orders Over Time ---
     if "Date" in df.columns:
@@ -49,22 +43,22 @@ if not df.empty:
         st.line_chart(daily_orders)
 
     # --- Revenue Over Time ---
-    if "Date" in df.columns and "Revenue" in df.columns:
+    if "Date" in df.columns and "Price" in df.columns:
         st.subheader("Revenue Over Time")
-        daily_revenue = df.groupby("Date")["Revenue"].sum()
+        daily_revenue = df.groupby("Date")["Price"].sum()
         st.line_chart(daily_revenue)
 
-    # --- Orders by Category ---
-    if "Category" in df.columns:
-        st.subheader("Orders by Category")
-        category_counts = df["Category"].value_counts()
-        st.bar_chart(category_counts)
+    # --- Orders by Status ---
+    if "Status" in df.columns:
+        st.subheader("Orders by Status")
+        status_counts = df["Status"].value_counts()
+        st.bar_chart(status_counts)
 
-    # --- Top Products by Revenue ---
-    if "Product" in df.columns and "Revenue" in df.columns:
-        st.subheader("Top Products by Revenue")
-        top_products = df.groupby("Product")["Revenue"].sum().sort_values(ascending=False).head(10)
-        st.bar_chart(top_products)
+    # --- Top Customers by Spending ---
+    if "Customer Name" in df.columns and "Price" in df.columns:
+        st.subheader("Top Customers by Spending")
+        top_customers = df.groupby("Customer Name")["Price"].sum().sort_values(ascending=False).head(10)
+        st.bar_chart(top_customers)
 
     # --- Heatmap-style Orders by Day of Week vs Week of Month ---
     if "Date" in df.columns:
