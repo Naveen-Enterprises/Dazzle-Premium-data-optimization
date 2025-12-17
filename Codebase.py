@@ -7,7 +7,7 @@ import pandas as pd
 # --- Page Configuration ---
 st.set_page_config(page_title="DAZZLE PREMIUM Order Email Generator", layout="wide", initial_sidebar_state="collapsed")
 
-# --- Custom CSS Styling (Handcrafted, Minimal Design) ---
+# --- Custom CSS Styling (Alive & Handcrafted) ---
 st.markdown("""
 <style>
     * {
@@ -17,295 +17,335 @@ st.markdown("""
     }
 
     html, body, .stApp {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #fafbfc;
-        color: #1a1a1a;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+        background: #f8f9fa;
+        color: #2c3e50;
     }
 
     .main .block-container {
-        max-width: 1200px;
-        padding: 2.5rem 2rem;
+        max-width: 1280px;
+        padding: 3rem 2.5rem;
         background: white;
         margin: 0 auto;
-        border-radius: 0;
     }
 
-    /* Typography - Clean and Simple */
+    /* Typography - Warm & Real */
     h1 {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #0a0a0a;
-        margin: 0 0 0.3rem 0;
-        letter-spacing: -0.3px;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0 0 0.2rem 0;
+        letter-spacing: -0.5px;
     }
 
     .subtitle {
-        font-size: 0.9rem;
-        color: #666;
+        font-size: 1rem;
+        color: #7f8c8d;
         font-weight: 400;
-        margin: 0 0 1.5rem 0;
-    }
-
-    h2 {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #0a0a0a;
-        margin: 1.2rem 0 0.6rem 0;
-    }
-
-    h3 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin: 0.8rem 0 0.5rem 0;
-    }
-
-    h4 {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #666;
-        margin: 0.8rem 0 0.4rem 0;
-        text-transform: uppercase;
+        margin: 0 0 2rem 0;
         letter-spacing: 0.3px;
     }
 
-    p {
-        font-size: 0.9rem;
-        color: #666;
-        line-height: 1.5;
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 1.5rem 0 0.8rem 0;
     }
 
-    /* Buttons */
+    h3 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 1rem 0 0.6rem 0;
+    }
+
+    h4 {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #7f8c8d;
+        margin: 1rem 0 0.5rem 0;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    p {
+        font-size: 0.95rem;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    /* Buttons - Warm & Interactive */
     .stButton button {
-        background: #0a0a0a;
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
         color: white;
         border: none;
-        border-radius: 5px;
-        padding: 0.6rem 1.2rem;
-        font-weight: 500;
+        border-radius: 6px;
+        padding: 0.65rem 1.3rem;
+        font-weight: 600;
         font-size: 0.9rem;
         cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: none;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
     }
 
     .stButton button:hover {
-        background: #2a2a2a;
-        transform: none;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+        box-shadow: 0 4px 16px rgba(44, 62, 80, 0.25);
+        transform: translateY(-2px);
     }
 
     .stButton button:active {
-        opacity: 0.9;
+        transform: translateY(0);
     }
 
-    /* Input Fields */
+    /* Input Fields - Inviting */
     .stTextInput > div > div > input,
     .stTextArea > div > textarea {
         background-color: #fafbfc !important;
-        border: 1px solid #d0d0d0 !important;
-        border-radius: 5px !important;
-        padding: 0.8rem !important;
-        font-size: 0.9rem !important;
-        color: #0a0a0a !important;
-        transition: all 0.2s ease;
+        border: 1.5px solid #e0e6ed !important;
+        border-radius: 7px !important;
+        padding: 0.9rem !important;
+        font-size: 0.95rem !important;
+        color: #2c3e50 !important;
+        transition: all 0.3s ease;
     }
 
     .stTextInput > div > div > input::placeholder,
     .stTextArea > div > textarea::placeholder {
-        color: #999 !important;
+        color: #bdc3c7 !important;
+        font-weight: 400;
     }
 
     .stTextInput > div > div > input:focus,
     .stTextArea > div > textarea:focus {
-        border-color: #0a0a0a !important;
-        box-shadow: none !important;
+        border-color: #34495e !important;
+        box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08) !important;
         outline: none !important;
+        background-color: white !important;
     }
 
-    /* Status Cards */
+    /* Status Cards - Expressive */
     .success-card {
-        background: #f0f9f7;
-        border-left: 3px solid #10b981;
-        border-radius: 4px;
-        padding: 0.9rem;
-        margin-bottom: 1rem;
-        color: #145a32;
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-left: 4px solid #22c55e;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1.2rem;
+        color: #166534;
         font-size: 0.9rem;
+        font-weight: 500;
+        box-shadow: 0 2px 6px rgba(34, 197, 94, 0.1);
     }
 
     .warning-card {
-        background: #fef8f0;
-        border-left: 3px solid #f59e0b;
-        border-radius: 4px;
-        padding: 0.9rem;
-        margin-bottom: 1rem;
-        color: #7d6608;
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        border-left: 4px solid #f59e0b;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1.2rem;
+        color: #92400e;
         font-size: 0.9rem;
+        font-weight: 500;
+        box-shadow: 0 2px 6px rgba(245, 158, 11, 0.1);
     }
 
     .info-card {
-        background: #eff6ff;
-        border-left: 3px solid #0284c7;
-        border-radius: 4px;
-        padding: 0.9rem;
-        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border-left: 4px solid #0ea5e9;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1.2rem;
         color: #0c2340;
         font-size: 0.9rem;
+        font-weight: 500;
+        box-shadow: 0 2px 6px rgba(14, 165, 233, 0.1);
     }
 
-    /* Data Display Boxes */
+    /* Data Display Boxes - Prominent */
     .data-display-box {
-        background: #fafbfc;
-        border: 1px solid #d0d0d0;
-        border-radius: 5px;
-        padding: 0.9rem;
-        margin-bottom: 0.8rem;
+        background: #f8f9fa;
+        border: 1.5px solid #e0e6ed;
+        border-radius: 7px;
+        padding: 1rem;
+        margin-bottom: 1rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-size: 0.9rem;
-    }
-
-    .data-display-box span:first-child {
-        color: #0a0a0a;
-        word-break: break-all;
-        flex: 1;
-    }
-
-    /* Copy Button */
-    .copy-button {
-        background: #0a0a0a;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-        font-weight: 500;
-        cursor: pointer;
-        margin-left: 0.8rem;
-        white-space: nowrap;
         transition: all 0.2s ease;
     }
 
-    .copy-button:hover {
-        background: #2a2a2a;
+    .data-display-box:hover {
+        border-color: #34495e;
+        background: white;
     }
 
-    /* Extracted Data Card */
-    .extracted-data-card {
-        background: #fafbfc;
-        border: 1px solid #d0d0d0;
+    .data-display-box span:first-child {
+        color: #2c3e50;
+        word-break: break-all;
+        flex: 1;
+        font-weight: 500;
+    }
+
+    /* Copy Button - Actionable */
+    .copy-button {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        border: none;
         border-radius: 5px;
-        padding: 1rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-left: 0.8rem;
+        white-space: nowrap;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 6px rgba(44, 62, 80, 0.1);
+    }
+
+    .copy-button:hover {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+        box-shadow: 0 3px 10px rgba(44, 62, 80, 0.15);
+        transform: translateY(-1px);
+    }
+
+    /* Extracted Data Card - Clean but Warm */
+    .extracted-data-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, white 100%);
+        border: 1.5px solid #e0e6ed;
+        border-radius: 7px;
+        padding: 1.2rem;
+        margin-top: 1.2rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     .field-row {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 0.7rem;
+        gap: 1.2rem;
+        margin-bottom: 0.8rem;
         font-size: 0.9rem;
+        align-items: center;
     }
 
     .field-label {
-        font-weight: 600;
-        color: #666;
-        min-width: 120px;
+        font-weight: 700;
+        color: #7f8c8d;
+        min-width: 110px;
         text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.2px;
+        font-size: 0.72rem;
+        letter-spacing: 0.3px;
     }
 
     .field-value-display {
-        color: #0a0a0a;
+        color: #2c3e50;
         flex: 1;
         background: white;
-        padding: 0.4rem 0.6rem;
-        border-radius: 4px;
-        border: 1px solid #d0d0d0;
+        padding: 0.5rem 0.8rem;
+        border-radius: 5px;
+        border: 1px solid #e0e6ed;
+        font-weight: 500;
     }
 
-    /* Order Items */
+    /* Order Items - Readable */
     .order-item {
-        background: white;
-        border: 1px solid #d0d0d0;
-        border-radius: 5px;
-        padding: 0.8rem;
-        margin-bottom: 0.6rem;
+        background: linear-gradient(135deg, white 0%, #f8f9fa 100%);
+        border: 1.5px solid #e0e6ed;
+        border-radius: 6px;
+        padding: 0.9rem;
+        margin-bottom: 0.7rem;
         font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+    .order-item:hover {
+        border-color: #34495e;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.1);
     }
 
     .item-detail {
         display: flex;
-        gap: 0.6rem;
-        margin-bottom: 0.4rem;
+        gap: 0.8rem;
+        margin-bottom: 0.5rem;
+        align-items: flex-start;
     }
 
     .item-detail .label {
-        font-weight: 600;
-        color: #666;
-        min-width: 80px;
+        font-weight: 700;
+        color: #7f8c8d;
+        min-width: 75px;
         text-transform: uppercase;
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         letter-spacing: 0.2px;
     }
 
     .item-detail .value {
-        color: #0a0a0a;
-    }
-
-    /* Code Block */
-    .stCode {
-        background: #fafbfc !important;
-        border: 1px solid #d0d0d0 !important;
-        border-radius: 5px !important;
-        padding: 1rem !important;
-        line-height: 1.5;
-    }
-
-    /* Tabs */
-    [data-baseweb="tab"] {
+        color: #2c3e50;
         font-weight: 500;
     }
 
-    /* Expander */
+    /* Code Block - Readable */
+    .stCode {
+        background: #f5f7fa !important;
+        border: 1.5px solid #e0e6ed !important;
+        border-radius: 6px !important;
+        padding: 1.2rem !important;
+        line-height: 1.6;
+    }
+
+    .stCode code {
+        color: #2c3e50 !important;
+        font-weight: 500;
+    }
+
+    /* Tabs - Natural */
+    [data-baseweb="tab"] {
+        font-weight: 600;
+        color: #7f8c8d;
+    }
+
+    [data-baseweb="tab"][aria-selected="true"] {
+        color: #2c3e50;
+    }
+
+    /* Expander - Inviting */
     .st-expander {
-        border: 1px solid #d0d0d0 !important;
-        border-radius: 5px !important;
+        border: 1.5px solid #e0e6ed !important;
+        border-radius: 6px !important;
         overflow: hidden;
         background: white !important;
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
     }
 
     [data-testid="stExpanderDetails"] {
-        background: #fafbfc !important;
+        background: #f8f9fa !important;
     }
 
-    /* Divider */
+    /* Divider - Subtle */
     hr {
         border: none;
         height: 1px;
-        background: #d0d0d0;
-        margin: 1.5rem 0;
+        background: linear-gradient(90deg, transparent, #e0e6ed, transparent);
+        margin: 2rem 0;
     }
 
     /* Section Spacing */
     [data-testid="column"] {
-        gap: 1.5rem;
+        gap: 2rem;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
         .main .block-container {
-            padding: 1.5rem 1rem;
+            padding: 2rem 1.5rem;
         }
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
         .field-row {
             flex-direction: column;
-            gap: 0.3rem;
+            gap: 0.4rem;
         }
         .data-display-box {
             flex-direction: column;
@@ -313,7 +353,7 @@ st.markdown("""
         }
         .copy-button {
             margin-left: 0;
-            margin-top: 0.6rem;
+            margin-top: 0.8rem;
             width: 100%;
         }
     }
@@ -745,36 +785,36 @@ def reset_app_state():
 
 # --- Main Application Logic ---
 
-st.markdown("""<h1>Dazzle Premium</h1>""", unsafe_allow_html=True)
-st.markdown("""<p class='subtitle'>Order Email Generator</p>""", unsafe_allow_html=True)
+st.markdown("""<h1>✨ Dazzle Premium</h1>""", unsafe_allow_html=True)
+st.markdown("""<p class='subtitle'>Order Email Generator — Ship faster, communicate better</p>""", unsafe_allow_html=True)
 st.divider()
 
 # Tabs for different sections
-tab1, tab2 = st.tabs(["Email Generator", "Batch Orders"])
+tab1, tab2 = st.tabs(["📧 Email Generator", "📦 Batch Orders"])
 
 with tab1:
-    st.subheader("Generate Professional Emails")
+    st.markdown("<h2 style='margin-top: 0;'>Generate Professional Emails</h2>", unsafe_allow_html=True)
     
     # Create two columns
-    col_left, col_right = st.columns([1.1, 0.9], gap="medium")
+    col_left, col_right = st.columns([1.15, 0.95], gap="large")
 
     with col_left:
         st.markdown("<h3>Order Details</h3>", unsafe_allow_html=True)
 
         raw_text_input = st.text_area(
             "Paste Order Export",
-            height=250,
+            height=240,
             value=st.session_state.raw_text,
-            placeholder="Paste your Shopify order export here...",
+            placeholder="Paste your complete Shopify order export here...",
             key="raw_text_input_main",
             label_visibility="collapsed"
         )
 
-        st.markdown("<h4 style='margin-top: 1rem;'>Email Type</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='margin-top: 1.2rem;'>Choose Email Type</h4>", unsafe_allow_html=True)
         col_buttons = st.columns(4, gap="small")
         
         with col_buttons[0]:
-            if st.button("Confirmation", use_container_width=True, key="btn_confirm"):
+            if st.button("✓ Confirmation", use_container_width=True, key="btn_confirm"):
                 if raw_text_input:
                     st.session_state.raw_text = raw_text_input
                     st.session_state.parsed_data = parse_shopify_export(raw_text_input)
@@ -788,7 +828,7 @@ with tab1:
                     st.warning("Please paste order details first")
         
         with col_buttons[1]:
-            if st.button("High-Risk", use_container_width=True, key="btn_highrisk"):
+            if st.button("⚠️ High-Risk", use_container_width=True, key="btn_highrisk"):
                 if raw_text_input:
                     st.session_state.raw_text = raw_text_input
                     st.session_state.parsed_data = parse_shopify_export(raw_text_input)
@@ -802,7 +842,7 @@ with tab1:
                     st.warning("Please paste order details first")
         
         with col_buttons[2]:
-            if st.button("Return", use_container_width=True, key="btn_return"):
+            if st.button("↩️ Return", use_container_width=True, key="btn_return"):
                 if raw_text_input:
                     st.session_state.raw_text = raw_text_input
                     st.session_state.parsed_data = parse_shopify_export(raw_text_input)
@@ -816,7 +856,7 @@ with tab1:
                     st.warning("Please paste order details first")
         
         with col_buttons[3]:
-            if st.button("Verification", use_container_width=True, key="btn_medium"):
+            if st.button("🔍 Verify", use_container_width=True, key="btn_medium"):
                 if raw_text_input:
                     st.session_state.raw_text = raw_text_input
                     st.session_state.parsed_data = parse_shopify_export(raw_text_input)
@@ -835,15 +875,15 @@ with tab1:
         if st.session_state.generated_email_body:
             # Status indicator
             if st.session_state.missing_info_flags and st.session_state.current_step == "generate_standard":
-                st.markdown(f"""<div class="warning-card">⚠️ Missing: {", ".join(st.session_state.missing_info_flags)}</div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div class="warning-card">⚠️ <strong>Missing:</strong> {", ".join(st.session_state.missing_info_flags)}</div>""", unsafe_allow_html=True)
             elif st.session_state.current_step == "generate_high_risk":
-                st.markdown("""<div class="warning-card">🚨 High-risk email</div>""", unsafe_allow_html=True)
+                st.markdown("""<div class="warning-card"><strong>🚨 High-Risk Email</strong></div>""", unsafe_allow_html=True)
             elif st.session_state.current_step == "generate_return":
-                st.markdown("""<div class="info-card">↩️ Return request</div>""", unsafe_allow_html=True)
+                st.markdown("""<div class="info-card"><strong>↩️ Return Request</strong></div>""", unsafe_allow_html=True)
             elif st.session_state.current_step == "generate_medium_risk":
-                st.markdown("""<div class="warning-card">🔍 Verification required</div>""", unsafe_allow_html=True)
+                st.markdown("""<div class="warning-card"><strong>🔍 Verification Required</strong></div>""", unsafe_allow_html=True)
             else:
-                st.markdown("""<div class="success-card">✓ Ready to send</div>""", unsafe_allow_html=True)
+                st.markdown("""<div class="success-card"><strong>✓ Ready to send</strong></div>""", unsafe_allow_html=True)
 
             st.markdown("<h4>To</h4>", unsafe_allow_html=True)
             st.markdown(f"""
@@ -865,20 +905,20 @@ with tab1:
                 </div>
             """, unsafe_allow_html=True)
 
-            st.markdown("<h4>Body</h4>", unsafe_allow_html=True)
+            st.markdown("<h4>Message</h4>", unsafe_allow_html=True)
             st.code(st.session_state.generated_email_body, language="text")
             
             js_safe_email_body = json.dumps(st.session_state.generated_email_body)
             st.markdown(f"""
-                <div style="text-align: right; margin: -0.5rem 0 1rem 0;">
+                <div style="text-align: right; margin: -0.8rem 0 1.2rem 0;">
                     <button class="copy-button" id="copyBodyBtn" onclick="copyToClipboard(
                         {js_safe_email_body}, 'copyBodyBtn'
-                    )">Copy Body</button>
+                    )">Copy Message</button>
                 </div>
             """, unsafe_allow_html=True)
 
             # Show extracted data in an expander
-            with st.expander("View extracted data"):
+            with st.expander("👁️ View extracted data"):
                 if st.session_state.current_step == "generate_standard":
                     st.markdown(f"""
                         <div class="extracted-data-card">
@@ -887,7 +927,7 @@ with tab1:
                                 <span class="field-value-display">{st.session_state.parsed_data.get('customer_name', '[Not found]')}</span>
                             </div>
                             <div class="field-row">
-                                <span class="field-label">Order</span>
+                                <span class="field-label">Order #</span>
                                 <span class="field-value-display">{st.session_state.parsed_data.get('order_number', '[Not found]')}</span>
                             </div>
                             <div class="field-row">
@@ -898,10 +938,11 @@ with tab1:
                     """, unsafe_allow_html=True)
 
                     if st.session_state.parsed_data.get("items"):
-                        st.markdown("<h4>Items</h4>", unsafe_allow_html=True)
-                        for item in st.session_state.parsed_data["items"]:
+                        st.markdown("<h4 style='margin-top: 1rem;'>Items Ordered</h4>", unsafe_allow_html=True)
+                        for idx, item in enumerate(st.session_state.parsed_data["items"], 1):
                             st.markdown(f"""
                                 <div class="order-item">
+                                    <div class="item-detail"><span class="label">Item {idx}</span></div>
                                     <div class="item-detail"><span class="label">Product</span> <span class="value">{item.get('product_name', 'N/A')}</span></div>
                                     <div class="item-detail"><span class="label">Code</span> <span class="value">{item.get('style_code', 'N/A')}</span></div>
                                     <div class="item-detail"><span class="label">Size</span> <span class="value">{item.get('size', 'Not found')}</span></div>
@@ -909,13 +950,14 @@ with tab1:
                                 </div>
                             """, unsafe_allow_html=True)
 
-            if st.button("New order", use_container_width=True, key="btn_reset"):
+            st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
+            if st.button("🔄 New order", use_container_width=True, key="btn_reset"):
                 reset_app_state()
         else:
-            st.markdown("""<p style='color: #999; text-align: center; padding: 2rem 0;'>← Paste order details and choose a type</p>""", unsafe_allow_html=True)
+            st.markdown("""<p style='color: #bdc3c7; text-align: center; padding: 3rem 1rem; font-size: 1.05rem;'>Paste an order on the left &rarr;</p>""", unsafe_allow_html=True)
 
 with tab2:
-    st.subheader("Batch Processing")
+    st.markdown("<h2 style='margin-top: 0;'>Batch Processing</h2>", unsafe_allow_html=True)
 
     raw_text = st.text_area(
         "Paste Shopify Orders",
@@ -973,7 +1015,7 @@ with tab2:
             st.dataframe(df, use_container_width=True)
 
             st.download_button(
-                "Download CSV",
+                "⬇️ Download as CSV",
                 df.to_csv(index=False),
                 file_name="shopify_orders.csv",
                 mime="text/csv",
@@ -981,4 +1023,4 @@ with tab2:
             )
 
         if warnings:
-            st.warning(f"{len(warnings)} order(s) skipped due to incomplete data")
+            st.warning(f"{len(warnings)} order(s) skipped — check your data format")
