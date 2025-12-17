@@ -1,6 +1,7 @@
 import streamlit as st
 import re
 import json # Import the json module
+import pandas as pd
 # Removed asyncio and httpx imports as LLM is no longer used
 
 # --- Page Configuration ---
@@ -675,6 +676,90 @@ def reset_app_state():
 # --- Main Application Logic ---
 
 st.markdown("""<h1 style='text-align: center;'>📦 DAZZLE PREMIUM Order Email Generator</h1>""", unsafe_allow_html=True)
+
+with st.expander("Online Orders Report Automation"):
+    st.subheader("Shopify Orders Extractor")
+
+    raw_text = st.text_area(
+        "Paste the Shopify Orders page text here",
+        height=450
+    )
+
+    def parse_orders(text):
+        rows = []
+        warnings = []
+
+        if "Select gid://shopify/Order/" not in text:
+            return pd.DataFrame(), ["No Shopify order blocks found"]
+
+        blocks = text.split("Select gid://shopify/Order/")[1:]
+
+        for block in blocks:
+            order = name = amount = None
+
+            # Order number (ONLY # + digits)
+            order_match = re.search(r"#\d+", block)
+            if order_match:
+                order = order_match.group(0)
+
+            # Amount (must be valid currency)
+            amount_match = re.search(r"\$[\d,]+\.\d{2}", block)
+            if amount_match:
+                amount = float(
+                    amount_match.group(0).replace("$", "").replace(",", "")
+                )
+
+            # Customer name (line after "1 item" or "2 items")
+            name_match = re.search(r"\d+\sitems?\s*\n([^\n]+)", block)
+            if name_match:
+                candidate = name_match.group(1).strip()
+                if "$" not in candidate and len(candidate) > 1:
+                    name = candidate
+
+            # Only keep rows that fully parsed
+            if order and name and amount is not None:
+                rows.append({
+                    "Order Number": order,
+                    "Customer Name": name,
+                    "Amount ($)": amount
+                })
+            else:
+                warnings.append("One order skipped due to incomplete parsing")
+
+        return pd.DataFrame(rows), warnings
+
+    if st.button("Parse Orders"):
+        df, warnings = parse_orders(raw_text)
+
+        if df.empty:
+            st.error("No valid orders could be extracted.")
+        else:
+            styled_df = (
+                df.style
+                .set_properties(
+                    subset=["Order Number", "Customer Name"],
+                    **{"text-align": "center"}
+                )
+                .set_properties(
+                    subset=["Amount ($)"],
+                    **{"text-align": "right"}
+                )
+            )
+
+            st.subheader("Extracted Orders")
+            st.dataframe(styled_df, use_container_width=True)
+
+            st.download_button(
+                "Download CSV",
+                df.to_csv(index=False),
+                file_name="shopify_orders.csv",
+                mime="text/csv"
+            )
+
+        if warnings:
+            st.subheader("Notes")
+            for w in warnings:
+                st.warning(w)
 
 # Create two columns for the main layout
 col_left, col_right = st.columns(2)
