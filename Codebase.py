@@ -7,7 +7,7 @@ import pandas as pd
 # --- Page Configuration ---
 st.set_page_config(page_title="DAZZLE PREMIUM Order Email Generator", layout="wide", initial_sidebar_state="collapsed")
 
-# --- Custom CSS Styling (Modern Dashboard Design) ---
+# --- Custom CSS Styling (Handcrafted, Minimal Design) ---
 st.markdown("""
 <style>
     * {
@@ -17,337 +17,295 @@ st.markdown("""
     }
 
     html, body, .stApp {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        color: #1e293b;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #fafbfc;
+        color: #1a1a1a;
     }
 
-    /* Hide Streamlit elements */
-    .st-emotion-cache-uf99v0 {
-        padding: 0 !important;
-    }
-
-    /* Main container - Full bleed dark background */
     .main .block-container {
-        max-width: 100%;
-        padding: 0;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        margin: 0;
+        max-width: 1200px;
+        padding: 2.5rem 2rem;
+        background: white;
+        margin: 0 auto;
         border-radius: 0;
     }
 
-    /* Header Bar */
-    [data-testid="stHeader"] {
-        background: transparent !important;
+    /* Typography - Clean and Simple */
+    h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #0a0a0a;
+        margin: 0 0 0.3rem 0;
+        letter-spacing: -0.3px;
     }
 
-    /* Typography */
-    h1 {
-        font-size: 2.8rem;
-        font-weight: 800;
-        color: white;
-        text-align: center;
-        margin-bottom: 0.5rem;
-        letter-spacing: -1px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    .subtitle {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 400;
+        margin: 0 0 1.5rem 0;
     }
 
     h2 {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: white;
-        margin: 1.5rem 0 1rem 0;
-        letter-spacing: -0.5px;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #0a0a0a;
+        margin: 1.2rem 0 0.6rem 0;
     }
 
     h3 {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: white;
-        margin: 1rem 0 0.6rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin: 0.8rem 0 0.5rem 0;
     }
 
     h4 {
-        font-size: 1rem;
+        font-size: 0.85rem;
         font-weight: 700;
-        color: #e2e8f0;
+        color: #666;
         margin: 0.8rem 0 0.4rem 0;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: 0.85rem;
+        letter-spacing: 0.3px;
     }
 
-    /* Buttons - Modern Blue */
+    p {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    /* Buttons */
     .stButton button {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        background: #0a0a0a;
         color: white;
         border: none;
-        border-radius: 8px;
-        padding: 0.7rem 1.4rem;
-        font-weight: 700;
-        font-size: 0.95rem;
+        border-radius: 5px;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        font-size: 0.9rem;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        transition: all 0.2s ease;
+        box-shadow: none;
     }
 
     .stButton button:hover {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-        transform: translateY(-2px);
+        background: #2a2a2a;
+        transform: none;
     }
 
     .stButton button:active {
-        transform: translateY(0);
+        opacity: 0.9;
     }
 
-    /* Input Fields - Modern Dark */
+    /* Input Fields */
     .stTextInput > div > div > input,
     .stTextArea > div > textarea {
-        background-color: #1e293b !important;
-        border: 1.5px solid #334155 !important;
-        border-radius: 8px !important;
-        padding: 1rem !important;
-        font-size: 0.95rem !important;
-        color: white !important;
-        transition: all 0.3s ease;
+        background-color: #fafbfc !important;
+        border: 1px solid #d0d0d0 !important;
+        border-radius: 5px !important;
+        padding: 0.8rem !important;
+        font-size: 0.9rem !important;
+        color: #0a0a0a !important;
+        transition: all 0.2s ease;
     }
 
     .stTextInput > div > div > input::placeholder,
     .stTextArea > div > textarea::placeholder {
-        color: #94a3b8 !important;
+        color: #999 !important;
     }
 
     .stTextInput > div > div > input:focus,
     .stTextArea > div > textarea:focus {
-        border-color: #3b82f6 !important;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        border-color: #0a0a0a !important;
+        box-shadow: none !important;
         outline: none !important;
     }
 
     /* Status Cards */
     .success-card {
-        background: linear-gradient(135deg, #10b981, #059669);
-        border: none;
-        border-left: 4px solid #34d399;
-        border-radius: 8px;
-        padding: 1rem 1.2rem;
-        margin-bottom: 1.2rem;
-        color: white;
-        font-weight: 500;
+        background: #f0f9f7;
+        border-left: 3px solid #10b981;
+        border-radius: 4px;
+        padding: 0.9rem;
+        margin-bottom: 1rem;
+        color: #145a32;
+        font-size: 0.9rem;
     }
 
     .warning-card {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
-        border: none;
-        border-left: 4px solid #fcd34d;
-        border-radius: 8px;
-        padding: 1rem 1.2rem;
-        margin-bottom: 1.2rem;
-        color: white;
-        font-weight: 500;
-    }
-
-    .error-card {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-        border: none;
-        border-left: 4px solid #fca5a5;
-        border-radius: 8px;
-        padding: 1rem 1.2rem;
-        margin-bottom: 1.2rem;
-        color: white;
-        font-weight: 500;
+        background: #fef8f0;
+        border-left: 3px solid #f59e0b;
+        border-radius: 4px;
+        padding: 0.9rem;
+        margin-bottom: 1rem;
+        color: #7d6608;
+        font-size: 0.9rem;
     }
 
     .info-card {
-        background: linear-gradient(135deg, #0ea5e9, #0284c7);
-        border: none;
-        border-left: 4px solid #7dd3fc;
-        border-radius: 8px;
-        padding: 1rem 1.2rem;
-        margin-bottom: 1.2rem;
-        color: white;
-        font-weight: 500;
-        font-size: 0.95rem;
+        background: #eff6ff;
+        border-left: 3px solid #0284c7;
+        border-radius: 4px;
+        padding: 0.9rem;
+        margin-bottom: 1rem;
+        color: #0c2340;
+        font-size: 0.9rem;
     }
 
     /* Data Display Boxes */
     .data-display-box {
-        background: #334155;
-        border: 1px solid #475569;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1rem;
+        background: #fafbfc;
+        border: 1px solid #d0d0d0;
+        border-radius: 5px;
+        padding: 0.9rem;
+        margin-bottom: 0.8rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
 
     .data-display-box span:first-child {
-        color: #e2e8f0;
+        color: #0a0a0a;
         word-break: break-all;
         flex: 1;
     }
 
     /* Copy Button */
     .copy-button {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        background: #0a0a0a;
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: 4px;
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
-        font-weight: 600;
+        font-weight: 500;
         cursor: pointer;
-        margin-left: 1rem;
+        margin-left: 0.8rem;
         white-space: nowrap;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
+        transition: all 0.2s ease;
     }
 
     .copy-button:hover {
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        background: #2a2a2a;
     }
 
     /* Extracted Data Card */
     .extracted-data-card {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .extracted-data-card h3 {
-        color: white;
-        margin-top: 0;
-        margin-bottom: 1.2rem;
+        background: #fafbfc;
+        border: 1px solid #d0d0d0;
+        border-radius: 5px;
+        padding: 1rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
     }
 
     .field-row {
         display: flex;
-        gap: 1.5rem;
-        margin-bottom: 0.9rem;
-        font-size: 0.95rem;
+        gap: 1rem;
+        margin-bottom: 0.7rem;
+        font-size: 0.9rem;
     }
 
     .field-label {
-        font-weight: 700;
-        color: #64748b;
-        min-width: 140px;
+        font-weight: 600;
+        color: #666;
+        min-width: 120px;
         text-transform: uppercase;
-        letter-spacing: 0.3px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.2px;
     }
 
     .field-value-display {
-        color: #e2e8f0;
+        color: #0a0a0a;
         flex: 1;
-        background: #0f172a;
-        padding: 0.5rem 0.8rem;
-        border-radius: 6px;
-        border: 1px solid #334155;
+        background: white;
+        padding: 0.4rem 0.6rem;
+        border-radius: 4px;
+        border: 1px solid #d0d0d0;
     }
 
     /* Order Items */
     .order-item {
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 0.8rem;
-        font-size: 0.9rem;
+        background: white;
+        border: 1px solid #d0d0d0;
+        border-radius: 5px;
+        padding: 0.8rem;
+        margin-bottom: 0.6rem;
+        font-size: 0.85rem;
     }
 
     .item-detail {
         display: flex;
-        gap: 0.8rem;
-        margin-bottom: 0.5rem;
+        gap: 0.6rem;
+        margin-bottom: 0.4rem;
     }
 
     .item-detail .label {
-        font-weight: 700;
-        color: #64748b;
-        min-width: 90px;
+        font-weight: 600;
+        color: #666;
+        min-width: 80px;
         text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.3px;
+        font-size: 0.7rem;
+        letter-spacing: 0.2px;
     }
 
     .item-detail .value {
-        color: #cbd5e1;
+        color: #0a0a0a;
     }
 
     /* Code Block */
     .stCode {
-        background: #0f172a !important;
-        border: 1px solid #334155 !important;
-        border-radius: 8px !important;
-        padding: 1.2rem !important;
-        line-height: 1.6;
+        background: #fafbfc !important;
+        border: 1px solid #d0d0d0 !important;
+        border-radius: 5px !important;
+        padding: 1rem !important;
+        line-height: 1.5;
     }
 
-    .stCode code {
-        color: #e2e8f0 !important;
-    }
-
-    /* Column Separators */
-    [data-testid="column"] {
-        gap: 2rem;
+    /* Tabs */
+    [data-baseweb="tab"] {
+        font-weight: 500;
     }
 
     /* Expander */
     .st-expander {
-        border: 1px solid #334155 !important;
-        border-radius: 12px !important;
+        border: 1px solid #d0d0d0 !important;
+        border-radius: 5px !important;
         overflow: hidden;
-        background: #1e293b !important;
-        margin-bottom: 1.5rem;
+        background: white !important;
+        margin-bottom: 1rem;
     }
 
     [data-testid="stExpanderDetails"] {
-        background: #0f172a !important;
+        background: #fafbfc !important;
     }
 
-    /* Separator */
+    /* Divider */
     hr {
         border: none;
         height: 1px;
-        background: linear-gradient(90deg, transparent, #334155, transparent);
+        background: #d0d0d0;
         margin: 1.5rem 0;
     }
 
-    /* Section Label */
-    .section-label {
-        color: #94a3b8;
-        font-size: 0.85rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 1rem;
-        display: block;
+    /* Section Spacing */
+    [data-testid="column"] {
+        gap: 1.5rem;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
         .main .block-container {
-            padding: 1rem;
+            padding: 1.5rem 1rem;
         }
         h1 {
-            font-size: 2rem;
-        }
-        h2 {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
         }
         .field-row {
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.3rem;
         }
         .data-display-box {
             flex-direction: column;
@@ -355,7 +313,7 @@ st.markdown("""
         }
         .copy-button {
             margin-left: 0;
-            margin-top: 0.8rem;
+            margin-top: 0.6rem;
             width: 100%;
         }
     }
@@ -787,42 +745,36 @@ def reset_app_state():
 
 # --- Main Application Logic ---
 
-st.markdown("""<h1 style='padding: 2rem 0; margin: 0;'>✨ DAZZLE PREMIUM</h1>""", unsafe_allow_html=True)
-st.markdown("""<div style='text-align: center; color: #cbd5e1; font-size: 0.95rem; margin-bottom: 2rem; font-weight: 500;'>ORDER EMAIL GENERATOR — Automate Your Customer Communications</div>""", unsafe_allow_html=True)
-
-st.markdown("""<hr style='border: none; height: 1px; background: linear-gradient(90deg, transparent, #334155, transparent); margin: 2rem 0;'>""", unsafe_allow_html=True)
+st.markdown("""<h1>Dazzle Premium</h1>""", unsafe_allow_html=True)
+st.markdown("""<p class='subtitle'>Order Email Generator</p>""", unsafe_allow_html=True)
+st.divider()
 
 # Tabs for different sections
-tab1, tab2 = st.tabs(["📧 Email Generator", "📊 Batch Orders"])
+tab1, tab2 = st.tabs(["Email Generator", "Batch Orders"])
 
 with tab1:
-    st.markdown("""<span class='section-label'>→ Generate Professional Emails</span>""", unsafe_allow_html=True)
+    st.subheader("Generate Professional Emails")
     
-    # Create two columns for the main layout
-    col_left, col_right = st.columns([1.2, 1], gap="large")
+    # Create two columns
+    col_left, col_right = st.columns([1.1, 0.9], gap="medium")
 
     with col_left:
-        st.markdown("""
-        <div style='background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem;'>
-            <h2 style='margin-top: 0; color: white;'>📋 Order Details</h2>
-            <p style='color: #94a3b8; font-size: 0.9rem; margin: 0;'>Paste your Shopify order export and select an email type below</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<h3>Order Details</h3>", unsafe_allow_html=True)
 
         raw_text_input = st.text_area(
             "Paste Order Export",
-            height=280,
+            height=250,
             value=st.session_state.raw_text,
-            placeholder="Paste your complete Shopify order export here...",
+            placeholder="Paste your Shopify order export here...",
             key="raw_text_input_main",
             label_visibility="collapsed"
         )
 
-        st.markdown("""<span class='section-label' style='margin-top: 1.5rem;'>→ Email Type</span>""", unsafe_allow_html=True)
-        col_buttons_input = st.columns(4, gap="small")
+        st.markdown("<h4 style='margin-top: 1rem;'>Email Type</h4>", unsafe_allow_html=True)
+        col_buttons = st.columns(4, gap="small")
         
-        with col_buttons_input[0]:
-            if st.button("✓ Confirmation", use_container_width=True, key="btn_confirm"):
+        with col_buttons[0]:
+            if st.button("Confirmation", use_container_width=True, key="btn_confirm"):
                 if raw_text_input:
                     st.session_state.raw_text = raw_text_input
                     st.session_state.parsed_data = parse_shopify_export(raw_text_input)
@@ -835,8 +787,8 @@ with tab1:
                 else:
                     st.warning("Please paste order details first")
         
-        with col_buttons_input[1]:
-            if st.button("⚠️ High-Risk", use_container_width=True, key="btn_highrisk"):
+        with col_buttons[1]:
+            if st.button("High-Risk", use_container_width=True, key="btn_highrisk"):
                 if raw_text_input:
                     st.session_state.raw_text = raw_text_input
                     st.session_state.parsed_data = parse_shopify_export(raw_text_input)
@@ -849,8 +801,8 @@ with tab1:
                 else:
                     st.warning("Please paste order details first")
         
-        with col_buttons_input[2]:
-            if st.button("↩️ Return", use_container_width=True, key="btn_return"):
+        with col_buttons[2]:
+            if st.button("Return", use_container_width=True, key="btn_return"):
                 if raw_text_input:
                     st.session_state.raw_text = raw_text_input
                     st.session_state.parsed_data = parse_shopify_export(raw_text_input)
@@ -863,8 +815,8 @@ with tab1:
                 else:
                     st.warning("Please paste order details first")
         
-        with col_buttons_input[3]:
-            if st.button("🔍 Verification", use_container_width=True, key="btn_medium"):
+        with col_buttons[3]:
+            if st.button("Verification", use_container_width=True, key="btn_medium"):
                 if raw_text_input:
                     st.session_state.raw_text = raw_text_input
                     st.session_state.parsed_data = parse_shopify_export(raw_text_input)
@@ -878,31 +830,22 @@ with tab1:
                     st.warning("Please paste order details first")
 
     with col_right:
-        st.markdown("""
-        <div style='background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem;'>
-            <h2 style='margin-top: 0; color: white;'>✉️ Email Preview</h2>
-            <p style='color: #94a3b8; font-size: 0.9rem; margin: 0;'>Click Copy to grab each section</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<h3>Email Preview</h3>", unsafe_allow_html=True)
 
         if st.session_state.generated_email_body:
-            # Status badge
+            # Status indicator
             if st.session_state.missing_info_flags and st.session_state.current_step == "generate_standard":
-                st.markdown("""
-                    <div class="warning-card">
-                        ⚠️ Missing: """ + ", ".join(st.session_state.missing_info_flags) + """
-                    </div>
-                """, unsafe_allow_html=True)
+                st.markdown(f"""<div class="warning-card">⚠️ Missing: {", ".join(st.session_state.missing_info_flags)}</div>""", unsafe_allow_html=True)
             elif st.session_state.current_step == "generate_high_risk":
-                st.markdown("""<div class="warning-card">🚨 HIGH-RISK EMAIL</div>""", unsafe_allow_html=True)
+                st.markdown("""<div class="warning-card">🚨 High-risk email</div>""", unsafe_allow_html=True)
             elif st.session_state.current_step == "generate_return":
-                st.markdown("""<div class="info-card">↩️ RETURN REQUEST</div>""", unsafe_allow_html=True)
+                st.markdown("""<div class="info-card">↩️ Return request</div>""", unsafe_allow_html=True)
             elif st.session_state.current_step == "generate_medium_risk":
-                st.markdown("""<div class="warning-card">🔍 VERIFICATION REQUIRED</div>""", unsafe_allow_html=True)
+                st.markdown("""<div class="warning-card">🔍 Verification required</div>""", unsafe_allow_html=True)
             else:
-                st.markdown("""<div class="success-card">✓ READY TO SEND</div>""", unsafe_allow_html=True)
+                st.markdown("""<div class="success-card">✓ Ready to send</div>""", unsafe_allow_html=True)
 
-            st.markdown("<h4>Recipient Email</h4>", unsafe_allow_html=True)
+            st.markdown("<h4>To</h4>", unsafe_allow_html=True)
             st.markdown(f"""
                 <div class="data-display-box">
                     <span>{st.session_state.parsed_data.get('email_address', 'N/A')}</span>
@@ -912,7 +855,7 @@ with tab1:
                 </div>
             """, unsafe_allow_html=True)
 
-            st.markdown("<h4>Subject Line</h4>", unsafe_allow_html=True)
+            st.markdown("<h4>Subject</h4>", unsafe_allow_html=True)
             st.markdown(f"""
                 <div class="data-display-box">
                     <span>{st.session_state.generated_subject}</span>
@@ -922,65 +865,61 @@ with tab1:
                 </div>
             """, unsafe_allow_html=True)
 
-            st.markdown("<h4>Email Body</h4>", unsafe_allow_html=True)
+            st.markdown("<h4>Body</h4>", unsafe_allow_html=True)
             st.code(st.session_state.generated_email_body, language="text")
             
             js_safe_email_body = json.dumps(st.session_state.generated_email_body)
             st.markdown(f"""
-                <div style="text-align: right; margin-top: -0.8rem; margin-bottom: 1rem;">
+                <div style="text-align: right; margin: -0.5rem 0 1rem 0;">
                     <button class="copy-button" id="copyBodyBtn" onclick="copyToClipboard(
                         {js_safe_email_body}, 'copyBodyBtn'
-                    )">Copy Email Body</button>
+                    )">Copy Body</button>
                 </div>
             """, unsafe_allow_html=True)
 
             # Show extracted data in an expander
-            with st.expander("📊 View Extracted Data", expanded=False):
+            with st.expander("View extracted data"):
                 if st.session_state.current_step == "generate_standard":
                     st.markdown(f"""
                         <div class="extracted-data-card">
                             <div class="field-row">
-                                <span class="field-label">Customer Name:</span>
-                                <span class="field-value-display">{st.session_state.parsed_data.get('customer_name', '[Not Found]')}</span>
+                                <span class="field-label">Name</span>
+                                <span class="field-value-display">{st.session_state.parsed_data.get('customer_name', '[Not found]')}</span>
                             </div>
                             <div class="field-row">
-                                <span class="field-label">Order Number:</span>
-                                <span class="field-value-display">{st.session_state.parsed_data.get('order_number', '[Not Found]')}</span>
+                                <span class="field-label">Order</span>
+                                <span class="field-value-display">{st.session_state.parsed_data.get('order_number', '[Not found]')}</span>
                             </div>
                             <div class="field-row">
-                                <span class="field-label">Phone:</span>
-                                <span class="field-value-display">{st.session_state.parsed_data.get('phone_number', '[Not Found]')}</span>
+                                <span class="field-label">Phone</span>
+                                <span class="field-value-display">{st.session_state.parsed_data.get('phone_number', '[Not found]')}</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
 
                     if st.session_state.parsed_data.get("items"):
-                        st.markdown("<h4>Order Items</h4>", unsafe_allow_html=True)
+                        st.markdown("<h4>Items</h4>", unsafe_allow_html=True)
                         for item in st.session_state.parsed_data["items"]:
                             st.markdown(f"""
                                 <div class="order-item">
-                                    <div class="item-detail"><span class="label">Product:</span> <span class="value">{item.get('product_name', 'N/A')}</span></div>
-                                    <div class="item-detail"><span class="label">Style Code:</span> <span class="value">{item.get('style_code', 'N/A')}</span></div>
-                                    <div class="item-detail"><span class="label">Size:</span> <span class="value">{item.get('size', 'Size Not Found')}</span></div>
-                                    <div class="item-detail"><span class="label">Quantity:</span> <span class="value">{item.get('quantity', 1)}</span></div>
+                                    <div class="item-detail"><span class="label">Product</span> <span class="value">{item.get('product_name', 'N/A')}</span></div>
+                                    <div class="item-detail"><span class="label">Code</span> <span class="value">{item.get('style_code', 'N/A')}</span></div>
+                                    <div class="item-detail"><span class="label">Size</span> <span class="value">{item.get('size', 'Not found')}</span></div>
+                                    <div class="item-detail"><span class="label">Qty</span> <span class="value">{item.get('quantity', 1)}</span></div>
                                 </div>
                             """, unsafe_allow_html=True)
 
-            st.button("🔄 Start New Order", on_click=reset_app_state, use_container_width=True)
+            if st.button("New order", use_container_width=True, key="btn_reset"):
+                reset_app_state()
         else:
-            st.markdown("""
-                <div style='background: #0f172a; border: 1px dashed #334155; border-radius: 8px; padding: 3rem; text-align: center;'>
-                    <p style='color: #94a3b8; font-size: 1rem; margin: 0;'>👈 Paste your order on the left and choose an email type</p>
-                </div>
-            """, unsafe_allow_html=True)
+            st.markdown("""<p style='color: #999; text-align: center; padding: 2rem 0;'>← Paste order details and choose a type</p>""", unsafe_allow_html=True)
 
 with tab2:
-    st.markdown("""<span class='section-label'>→ Batch Processing</span>""", unsafe_allow_html=True)
-    st.subheader("📦 Shopify Orders Extractor")
+    st.subheader("Batch Processing")
 
     raw_text = st.text_area(
         "Paste Shopify Orders",
-        height=350,
+        height=300,
         placeholder="Paste the Shopify orders page text here...",
         key="batch_orders_textarea"
     )
@@ -1024,37 +963,22 @@ with tab2:
 
         return pd.DataFrame(rows), warnings
 
-    col_batch_1, col_batch_2 = st.columns([2, 1])
-    
-    with col_batch_1:
-        if st.button("Parse Orders", use_container_width=True, key="btn_parse"):
-            df, warnings = parse_orders(raw_text)
+    if st.button("Parse Orders", use_container_width=True, key="btn_parse"):
+        df, warnings = parse_orders(raw_text)
 
-            if df.empty:
-                st.error("❌ No valid orders could be extracted.")
-            else:
-                styled_df = (
-                    df.style
-                    .set_properties(
-                        subset=["Order Number", "Customer Name"],
-                        **{"text-align": "center"}
-                    )
-                    .set_properties(
-                        subset=["Amount ($)"],
-                        **{"text-align": "right"}
-                    )
-                )
+        if df.empty:
+            st.error("No valid orders could be extracted.")
+        else:
+            st.subheader("Extracted Orders")
+            st.dataframe(df, use_container_width=True)
 
-                st.subheader("Extracted Orders")
-                st.dataframe(styled_df, use_container_width=True)
+            st.download_button(
+                "Download CSV",
+                df.to_csv(index=False),
+                file_name="shopify_orders.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
 
-                st.download_button(
-                    "⬇️ Download CSV",
-                    df.to_csv(index=False),
-                    file_name="shopify_orders.csv",
-                    mime="text/csv",
-                    use_container_width=True
-                )
-
-            if warnings:
-                st.warning(f"⚠️ {len(warnings)} order(s) skipped due to incomplete data")
+        if warnings:
+            st.warning(f"{len(warnings)} order(s) skipped due to incomplete data")
