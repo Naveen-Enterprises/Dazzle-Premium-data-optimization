@@ -7,245 +7,196 @@ import pandas as pd
 # --- Page Configuration ---
 st.set_page_config(page_title="DAZZLE PREMIUM Order Email Generator", layout="wide", initial_sidebar_state="collapsed")
 
-# --- Custom CSS Styling (Inspired by Material Design & Apple Aesthetics) ---
-# Using Google Fonts (Inter for body, Montserrat for headings)
+# --- Custom CSS Styling (Modern, Sleek Design) ---
 st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    /* CSS Variables for consistent theming */
-    :root {
-        --primary-blue: #007AFF; /* Apple-like blue */
-        --primary-blue-dark: #0056B3; /* Darker shade for hover */
-        --light-blue-bg: #F0F8FF; /* Very light blue for soft backgrounds */
-        --text-dark: #1C1C1E; /* Darker, more Apple-like text */
-        --text-medium: #636366;
-        --text-light: #AEAEB2;
-        --border-color: #E0E0E0; /* Lighter, subtle border */
-        --bg-light: #F2F2F7; /* Apple-like light gray background */
-        --card-bg: #FFFFFF;
-
-        /* Feedback colors - slightly adjusted for consistency */
-        --success-bg: #E6F7EA; /* Lighter green */
-        --success-text: #28A745;
-        --warning-bg: #FFF8E6; /* Lighter yellow */
-        --warning-text: #FFC107;
-        --error-bg: #FFEBEB; /* Lighter red */
-        --error-text: #DC3545;
-
-        /* Shadows - refined for more depth on hover/active, very subtle */
-        --shadow-sm: rgba(0, 0, 0, 0.02) 0px 1px 1px; /* Even lighter shadow */
-        --shadow-md: rgba(0, 0, 0, 0.04) 0px 2px 4px; /* Lighter md shadow */
-        --shadow-lg: rgba(0, 0, 0, 0.06) 0px 4px 8px; /* Lighter lg shadow */
+    /* Global Reset and Base Styles */
+    * {
+        box-sizing: border-box;
     }
-
-    /* General Body and App Styling */
     html, body, .stApp {
-        font-family: 'Inter', sans-serif;
-        color: var(--text-dark);
-        background-color: var(--bg-light);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: #1a1a1a;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
     }
     .main .block-container {
-        padding-top: 0.8rem; /* Further reduced padding */
-        padding-bottom: 0.8rem; /* Further reduced padding */
-        max-width: 750px; /* Further reduced max width for content */
-        margin: 0 auto; /* Center content */
+        padding: 2rem 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
     }
 
-    /* Headings */
-    h1, h2, h3, h4 {
-        font-family: 'Montserrat', sans-serif;
-        color: var(--text-dark);
-        font-weight: 700;
-        margin-top: 1rem; /* Reduced margin */
-        margin-bottom: 0.4rem; /* Reduced margin */
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0 0 1rem 0;
     }
-    h1 { font-size: 1.8rem; text-align: center; margin-bottom: 1rem; color: var(--primary-blue); } /* Reduced size */
-    h2 { font-size: 1.5rem; }
-    h3 { font-size: 1rem; }
-    h4 { font-size: 0.9rem; color: var(--text-medium); margin-top: 0.5rem; } /* Reduced size, softer color */
+    h1 {
+        font-size: 2.5rem;
+        text-align: center;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 2rem;
+    }
+    h2 {
+        font-size: 1.8rem;
+        color: #4a5568;
+    }
+    h3 {
+        font-size: 1.4rem;
+        color: #2d3748;
+    }
+    h4 {
+        font-size: 1.2rem;
+        color: #4a5568;
+        margin-top: 1.5rem;
+    }
 
-    /* Input Fields (Text, Text Area) */
-    .stTextInput > div > div > input,
-    .stTextArea > div > textarea {
-        border: 1px solid var(--border-color);
-        border-radius: 6px; /* Reduced roundedness */
-        padding: 0.5rem 0.7rem; /* Reduced padding */
-        font-size: 0.8rem; /* Reduced font size */
-        box-shadow: var(--shadow-sm);
-        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        background-color: #f0f8ff;
+    /* Cards and Containers */
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
     }
-    .stTextArea > div > textarea { /* Specific distinct styling for the text area */
-        border: 1px solid var(--primary-blue); /* Distinct blue border */
-        box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.1), var(--shadow-md); /* Subtle blue glow + distinct shadow */
-        background-color: #f0f8ff; /* Ensure white background */
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
     }
-    .stTextInput > div > div > input:focus,
-    .stTextArea > div > textarea:focus {
-        border-color: var(--primary-blue);
-        box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2), var(--shadow-md); /* Softer, blue focus ring + deeper shadow */
-        outline: none;
+
+    .info-card {
+        background: linear-gradient(135deg, #e6fffa, #b2f5ea);
+        border-left: 4px solid #38b2ac;
+        color: #234e52;
+    }
+    .success-card {
+        background: linear-gradient(135deg, #f0fff4, #c6f6d5);
+        border-left: 4px solid #48bb78;
+        color: #22543d;
+    }
+    .warning-card {
+        background: linear-gradient(135deg, #fffaf0, #feebc8);
+        border-left: 4px solid #ed8936;
+        color: #7c2d12;
+    }
+    .error-card {
+        background: linear-gradient(135deg, #fed7d7, #feb2b2);
+        border-left: 4px solid #e53e3e;
+        color: #742a2a;
     }
 
     /* Buttons */
     .stButton button {
-        background-color: var(--primary-blue);
+        background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
-        font-weight: 600;
-        padding: 0.5rem 0.9rem; /* Reduced padding */
-        font-size: 0.85rem; /* Reduced font size */
-        border-radius: 6px; /* Reduced roundedness */
         border: none;
-        box-shadow: var(--shadow-md);
-        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.1s ease-in-out;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     .stButton button:hover {
-        background-color: var(--primary-blue-dark);
-        box-shadow: var(--shadow-lg);
-        transform: translateY(-0.5px); /* Subtle lift */
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
     }
     .stButton button:active {
         transform: translateY(0);
-        box-shadow: var(--shadow-sm);
     }
 
-    /* Custom Card Styles for Data Display */
-    .info-card, .success-card, .warning-card, .error-card {
-        padding: 0.7rem 0.9rem; /* Reduced padding */
-        border-radius: 8px; /* Reduced roundedness */
-        margin-bottom: 0.8rem; /* Reduced margin */
-        gap: 0.5rem; /* Reduced gap */
-        font-size: 0.8rem; /* Reduced font size */
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border-color);
-        background-color: var(--card-bg);
+    /* Input Fields */
+    .stTextInput > div > div > input,
+    .stTextArea > div > textarea {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
     }
-    .info-card:hover, .success-card:hover, .warning-card:hover, .error-card:hover {
-        box-shadow: var(--shadow-md);
-        transform: translateY(-0.5px);
-    }
-    .info-card { color: var(--primary-blue); background-color: var(--light-blue-bg); border-color: rgba(0, 122, 255, 0.06); }
-    .success-card { color: var(--success-text); background-color: var(--success-bg); border-color: rgba(40, 167, 69, 0.06); }
-    .warning-card { color: var(--warning-text); background-color: var(--warning-bg); border-color: rgba(255, 193, 7, 0.06); }
-    .error-card { color: var(--error-text); background-color: var(--error-bg); border-color: rgba(220, 53, 69, 0.06); }
-    .info-card span, .success-card span, .warning-card span, .error-card span {
-        font-size: 0.9rem; /* Adjusted icon size */
+    .stTextInput > div > div > input:focus,
+    .stTextArea > div > textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
     }
 
-    /* Specific Data Display Boxes (Email, Subject, Phone) */
+    /* Data Display */
     .data-display-box {
-        background-color: var(--light-blue-bg);
-        padding: 0.6rem 0.8rem; /* Reduced padding */
-        border-radius: 6px; /* Reduced roundedness */
-        margin-bottom: 0.6rem; /* Reduced margin */
-        font-size: 0.8rem; /* Reduced font size */
-        gap: 5px; /* Reduced gap */
-        box-shadow: var(--shadow-sm);
-        border: 1px solid rgba(0,0,0,0.03);
-    }
-    .data-display-box:hover {
-        box-shadow: var(--shadow-md);
-        transform: translateY(-0.5px);
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-    /* Copy Button within Data Display */
+    /* Copy Button */
     .copy-button {
-        background-color: var(--primary-blue);
+        background: #667eea;
         color: white;
-        border-radius: 5px; /* Reduced roundedness */
-        padding: 0.3rem 0.6rem; /* Reduced padding */
-        font-size: 0.7rem; /* Reduced font size */
-        box-shadow: var(--shadow-sm);
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
     }
     .copy-button:hover {
-        background-color: var(--primary-blue-dark);
-        box-shadow: var(--shadow-md);
+        background: #5a67d8;
     }
 
-    /* Extracted Data Review Cards */
-    .extracted-data-card {
-        background-color: var(--card-bg);
-        border-radius: 8px; /* Reduced roundedness */
-        padding: 0.9rem; /* Reduced padding */
-        margin-bottom: 0.9rem; /* Reduced margin */
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-color);
+    /* Expander */
+    .st-expander {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
     }
-    .extracted-data-card:hover {
-        box-shadow: var(--shadow-lg);
-        transform: translateY(-1px);
-    }
-    .extracted-data-card h3 {
-        margin-bottom: 0.6rem;
-        font-size: 1rem;
-        gap: 0.3rem;
-    }
-    .extracted-data-card .field-row {
-        gap: 0.6rem;
-        margin-bottom: 0.4rem;
-    }
-    .extracted-data-card .field-label {
-        min-width: 80px; /* Adjusted min-width */
-        font-size: 0.8rem;
-    }
-    .extracted-data-card .field-value-display {
-        font-size: 0.8rem;
-        padding: 0.3rem 0.6rem;
-        border-radius: 5px;
-    }
-    .extracted-data-card .edit-icon {
-        font-size: 0.8rem;
+    .st-expander > div:first-child {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        font-weight: 600;
+        padding: 1rem;
     }
 
-    /* Order Items List */
-    .order-item {
-        background-color: var(--card-bg);
-        border-radius: 6px; /* Reduced roundedness */
-        padding: 0.6rem; /* Reduced padding */
-        margin-bottom: 0.3rem; /* Reduced margin */
-        gap: 0.2rem; /* Reduced gap */
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border-color);
-    }
-    .order-item:hover {
-        box-shadow: var(--shadow-md);
-        transform: translateY(-0.5px);
-    }
-    .order-item .item-detail {
-        gap: 0.3rem;
-    }
-    .order-item .item-detail .label {
-        min-width: 50px; /* Adjusted min-width */
-        font-size: 0.75rem;
-    }
-    .order-item .item-detail .value {
-        font-size: 0.75rem;
+    /* Tables */
+    .stDataFrame {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
-    /* Code Block Styling (for email body) */
-    .stCode {
-        background-color: var(--bg-light);
-        border-radius: 8px; /* Reduced roundedness */
-        padding: 0.9rem; /* Reduced padding */
-        font-size: 0.8rem; /* Reduced font size */
-        line-height: 1.4; /* Reduced line height */
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border-color);
-    }
-
-    /* Responsive Adjustments */
+    /* Responsive Design */
     @media (max-width: 768px) {
-        h1 { font-size: 1.6rem; margin-bottom: 0.8rem; }
-        h2 { font-size: 1.2rem; }
-        .main .block-container { padding: 0.6rem 0.4rem; }
-        .extracted-data-card .field-label { min-width: auto; margin-bottom: 0.1rem; }
-        .copy-button { width: 100%; margin-top: 0.3rem; }
-        .info-card, .success-card, .warning-card, .error-card { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
-        .stButton button { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
-        .extracted-data-card { padding: 0.7rem; }
-        .extracted-data-card h3 { font-size: 0.9rem; }
-        .order-item { padding: 0.4rem; }
+        .main .block-container {
+            padding: 1rem 0.5rem;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+        .stButton button {
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -675,7 +626,7 @@ def reset_app_state():
 
 # --- Main Application Logic ---
 
-st.markdown("""<h1 style='text-align: center;'>📦 DAZZLE PREMIUM Order Email Generator</h1>""", unsafe_allow_html=True)
+st.markdown("""<h1 style='text-align: center;'>🚀 DAZZLE PREMIUM Order Email Generator</h1>""", unsafe_allow_html=True)
 
 with st.expander("Online Orders Report Automation"):
     st.subheader("Shopify Orders Extractor")
