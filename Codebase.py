@@ -7,9 +7,8 @@ import pandas as pd
 # --- Page Configuration ---
 st.set_page_config(page_title="DAZZLE PREMIUM Order Email Generator", layout="wide", initial_sidebar_state="collapsed")
 
-# --- Custom CSS Styling (Clean, Professional, Functional Design) ---
+# --- Custom CSS Styling (Modern Dashboard Design) ---
 st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
     * {
         margin: 0;
@@ -19,268 +18,320 @@ st.markdown("""
 
     html, body, .stApp {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        background-color: #f5f7fa;
-        color: #2c3e50;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #1e293b;
     }
 
+    /* Hide Streamlit elements */
+    .st-emotion-cache-uf99v0 {
+        padding: 0 !important;
+    }
+
+    /* Main container - Full bleed dark background */
     .main .block-container {
-        max-width: 1400px;
-        padding: 2rem;
-        background: white;
-        margin: 1rem auto;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        max-width: 100%;
+        padding: 0;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        margin: 0;
+        border-radius: 0;
+    }
+
+    /* Header Bar */
+    [data-testid="stHeader"] {
+        background: transparent !important;
     }
 
     /* Typography */
     h1 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1a3a52;
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: white;
         text-align: center;
-        margin-bottom: 2rem;
-        letter-spacing: -0.5px;
+        margin-bottom: 0.5rem;
+        letter-spacing: -1px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
 
     h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #2c3e50;
-        margin: 1.5rem 0 0.8rem 0;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: white;
+        margin: 1.5rem 0 1rem 0;
+        letter-spacing: -0.5px;
     }
 
     h3 {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #34495e;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
         margin: 1rem 0 0.6rem 0;
     }
 
     h4 {
         font-size: 1rem;
-        font-weight: 600;
-        color: #2c3e50;
-        margin: 1rem 0 0.5rem 0;
+        font-weight: 700;
+        color: #e2e8f0;
+        margin: 0.8rem 0 0.4rem 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.85rem;
     }
 
-    /* Buttons - Clean and Professional */
+    /* Buttons - Modern Blue */
     .stButton button {
-        background-color: #3498db;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         border: none;
-        border-radius: 6px;
-        padding: 0.6rem 1.2rem;
-        font-weight: 600;
-        font-size: 0.9rem;
+        border-radius: 8px;
+        padding: 0.7rem 1.4rem;
+        font-weight: 700;
+        font-size: 0.95rem;
         cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .stButton button:hover {
-        background-color: #2980b9;
-        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        transform: translateY(-2px);
     }
 
     .stButton button:active {
         transform: translateY(0);
-        box-shadow: 0 1px 2px rgba(52, 152, 219, 0.2);
     }
 
-    /* Input Fields - Clean and Clear */
+    /* Input Fields - Modern Dark */
     .stTextInput > div > div > input,
     .stTextArea > div > textarea {
-        background-color: #ffffff !important;
-        border: 1px solid #d5dce0 !important;
-        border-radius: 6px !important;
-        padding: 0.7rem 0.9rem !important;
+        background-color: #1e293b !important;
+        border: 1.5px solid #334155 !important;
+        border-radius: 8px !important;
+        padding: 1rem !important;
         font-size: 0.95rem !important;
-        color: #2c3e50 !important;
-        transition: all 0.2s ease;
+        color: white !important;
+        transition: all 0.3s ease;
+    }
+
+    .stTextInput > div > div > input::placeholder,
+    .stTextArea > div > textarea::placeholder {
+        color: #94a3b8 !important;
     }
 
     .stTextInput > div > div > input:focus,
     .stTextArea > div > textarea:focus {
-        border-color: #3498db !important;
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
         outline: none !important;
-    }
-
-    /* Placeholder text */
-    .stTextInput input::placeholder,
-    .stTextArea textarea::placeholder {
-        color: #7f8c8d !important;
     }
 
     /* Status Cards */
     .success-card {
-        background: #ecf8f3;
-        border-left: 4px solid #27ae60;
-        border-radius: 6px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        color: #145a32;
+        background: linear-gradient(135deg, #10b981, #059669);
+        border: none;
+        border-left: 4px solid #34d399;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.2rem;
+        color: white;
+        font-weight: 500;
     }
 
     .warning-card {
-        background: #fef5e7;
-        border-left: 4px solid #f39c12;
-        border-radius: 6px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        color: #7d6608;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        border: none;
+        border-left: 4px solid #fcd34d;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.2rem;
+        color: white;
+        font-weight: 500;
     }
 
     .error-card {
-        background: #fadbd8;
-        border-left: 4px solid #e74c3c;
-        border-radius: 6px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        color: #78281f;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        border: none;
+        border-left: 4px solid #fca5a5;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.2rem;
+        color: white;
+        font-weight: 500;
     }
 
     .info-card {
-        background: #eaf2f8;
-        border-left: 4px solid #3498db;
-        border-radius: 6px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        color: #0d3b66;
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        border: none;
+        border-left: 4px solid #7dd3fc;
+        border-radius: 8px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.2rem;
+        color: white;
+        font-weight: 500;
         font-size: 0.95rem;
-    }
-
-    .info-card span {
-        margin-right: 0.5rem;
     }
 
     /* Data Display Boxes */
     .data-display-box {
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 6px;
-        padding: 0.8rem;
-        margin-bottom: 0.8rem;
+        background: #334155;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-size: 0.95rem;
-        word-break: break-all;
     }
 
     .data-display-box span:first-child {
+        color: #e2e8f0;
+        word-break: break-all;
         flex: 1;
-        color: #2c3e50;
-        font-weight: 500;
     }
 
     /* Copy Button */
     .copy-button {
-        background: #3498db;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
         color: white;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-        font-weight: 500;
+        font-size: 0.8rem;
+        font-weight: 600;
         cursor: pointer;
-        margin-left: 0.8rem;
+        margin-left: 1rem;
         white-space: nowrap;
-        transition: background 0.2s ease;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
     }
 
     .copy-button:hover {
-        background: #2980b9;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
 
     /* Extracted Data Card */
     .extracted-data-card {
-        background: #fafbfc;
-        border: 1px solid #e1e4e8;
-        border-radius: 8px;
-        padding: 1.2rem;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 1.5rem;
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
     }
 
     .extracted-data-card h3 {
+        color: white;
         margin-top: 0;
-        margin-bottom: 1rem;
-        color: #2c3e50;
+        margin-bottom: 1.2rem;
     }
 
     .field-row {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 0.8rem;
+        gap: 1.5rem;
+        margin-bottom: 0.9rem;
         font-size: 0.95rem;
     }
 
     .field-label {
-        font-weight: 600;
-        color: #34495e;
+        font-weight: 700;
+        color: #64748b;
         min-width: 140px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-size: 0.8rem;
     }
 
     .field-value-display {
-        color: #555;
+        color: #e2e8f0;
         flex: 1;
+        background: #0f172a;
+        padding: 0.5rem 0.8rem;
+        border-radius: 6px;
+        border: 1px solid #334155;
     }
 
     /* Order Items */
     .order-item {
-        background: white;
-        border: 1px solid #e9ecef;
-        border-radius: 6px;
-        padding: 0.9rem;
-        margin-bottom: 0.7rem;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.8rem;
         font-size: 0.9rem;
     }
 
     .item-detail {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.8rem;
         margin-bottom: 0.5rem;
     }
 
     .item-detail .label {
-        font-weight: 600;
-        color: #34495e;
+        font-weight: 700;
+        color: #64748b;
         min-width: 90px;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.3px;
     }
 
     .item-detail .value {
-        color: #555;
-        flex: 1;
+        color: #cbd5e1;
     }
 
     /* Code Block */
     .stCode {
-        background: #f4f4f4 !important;
-        border: 1px solid #ddd !important;
-        border-radius: 6px !important;
-        padding: 1rem !important;
-        line-height: 1.5;
+        background: #0f172a !important;
+        border: 1px solid #334155 !important;
+        border-radius: 8px !important;
+        padding: 1.2rem !important;
+        line-height: 1.6;
     }
 
-    /* Columns Layout */
+    .stCode code {
+        color: #e2e8f0 !important;
+    }
+
+    /* Column Separators */
     [data-testid="column"] {
         gap: 2rem;
     }
 
-    /* Expander Styling */
+    /* Expander */
     .st-expander {
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
+        border: 1px solid #334155 !important;
+        border-radius: 12px !important;
         overflow: hidden;
+        background: #1e293b !important;
         margin-bottom: 1.5rem;
     }
 
-    /* DataFrame Styling */
-    .stDataFrame {
-        border-radius: 6px;
-        overflow: hidden;
+    [data-testid="stExpanderDetails"] {
+        background: #0f172a !important;
+    }
+
+    /* Separator */
+    hr {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #334155, transparent);
+        margin: 1.5rem 0;
+    }
+
+    /* Section Label */
+    .section-label {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+        display: block;
     }
 
     /* Responsive */
@@ -289,14 +340,14 @@ st.markdown("""
             padding: 1rem;
         }
         h1 {
-            font-size: 1.8rem;
+            font-size: 2rem;
         }
         h2 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
         .field-row {
             flex-direction: column;
-            gap: 0.3rem;
+            gap: 0.5rem;
         }
         .data-display-box {
             flex-direction: column;
@@ -304,7 +355,7 @@ st.markdown("""
         }
         .copy-button {
             margin-left: 0;
-            margin-top: 0.5rem;
+            margin-top: 0.8rem;
             width: 100%;
         }
     }
@@ -736,14 +787,202 @@ def reset_app_state():
 
 # --- Main Application Logic ---
 
-st.markdown("""<h1 style='text-align: center;'>🚀 DAZZLE PREMIUM Order Email Generator</h1>""", unsafe_allow_html=True)
+st.markdown("""<h1 style='padding: 2rem 0; margin: 0;'>✨ DAZZLE PREMIUM</h1>""", unsafe_allow_html=True)
+st.markdown("""<div style='text-align: center; color: #cbd5e1; font-size: 0.95rem; margin-bottom: 2rem; font-weight: 500;'>ORDER EMAIL GENERATOR — Automate Your Customer Communications</div>""", unsafe_allow_html=True)
 
-with st.expander("Online Orders Report Automation"):
-    st.subheader("Shopify Orders Extractor")
+st.markdown("""<hr style='border: none; height: 1px; background: linear-gradient(90deg, transparent, #334155, transparent); margin: 2rem 0;'>""", unsafe_allow_html=True)
+
+# Tabs for different sections
+tab1, tab2 = st.tabs(["📧 Email Generator", "📊 Batch Orders"])
+
+with tab1:
+    st.markdown("""<span class='section-label'>→ Generate Professional Emails</span>""", unsafe_allow_html=True)
+    
+    # Create two columns for the main layout
+    col_left, col_right = st.columns([1.2, 1], gap="large")
+
+    with col_left:
+        st.markdown("""
+        <div style='background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem;'>
+            <h2 style='margin-top: 0; color: white;'>📋 Order Details</h2>
+            <p style='color: #94a3b8; font-size: 0.9rem; margin: 0;'>Paste your Shopify order export and select an email type below</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        raw_text_input = st.text_area(
+            "Paste Order Export",
+            height=280,
+            value=st.session_state.raw_text,
+            placeholder="Paste your complete Shopify order export here...",
+            key="raw_text_input_main",
+            label_visibility="collapsed"
+        )
+
+        st.markdown("""<span class='section-label' style='margin-top: 1.5rem;'>→ Email Type</span>""", unsafe_allow_html=True)
+        col_buttons_input = st.columns(4, gap="small")
+        
+        with col_buttons_input[0]:
+            if st.button("✓ Confirmation", use_container_width=True, key="btn_confirm"):
+                if raw_text_input:
+                    st.session_state.raw_text = raw_text_input
+                    st.session_state.parsed_data = parse_shopify_export(raw_text_input)
+                    st.session_state.missing_info_flags = st.session_state.parsed_data["missing_info"]
+                    subject, message = generate_standard_email(st.session_state.parsed_data)
+                    st.session_state.generated_subject = subject
+                    st.session_state.generated_email_body = message
+                    st.session_state.current_step = "generate_standard"
+                    st.rerun()
+                else:
+                    st.warning("Please paste order details first")
+        
+        with col_buttons_input[1]:
+            if st.button("⚠️ High-Risk", use_container_width=True, key="btn_highrisk"):
+                if raw_text_input:
+                    st.session_state.raw_text = raw_text_input
+                    st.session_state.parsed_data = parse_shopify_export(raw_text_input)
+                    st.session_state.missing_info_flags = st.session_state.parsed_data["missing_info"]
+                    subject, message = generate_high_risk_email(st.session_state.parsed_data)
+                    st.session_state.generated_subject = subject
+                    st.session_state.generated_email_body = message
+                    st.session_state.current_step = "generate_high_risk"
+                    st.rerun()
+                else:
+                    st.warning("Please paste order details first")
+        
+        with col_buttons_input[2]:
+            if st.button("↩️ Return", use_container_width=True, key="btn_return"):
+                if raw_text_input:
+                    st.session_state.raw_text = raw_text_input
+                    st.session_state.parsed_data = parse_shopify_export(raw_text_input)
+                    st.session_state.missing_info_flags = st.session_state.parsed_data["missing_info"]
+                    subject, message = generate_return_email(st.session_state.parsed_data)
+                    st.session_state.generated_subject = subject
+                    st.session_state.generated_email_body = message
+                    st.session_state.current_step = "generate_return"
+                    st.rerun()
+                else:
+                    st.warning("Please paste order details first")
+        
+        with col_buttons_input[3]:
+            if st.button("🔍 Verification", use_container_width=True, key="btn_medium"):
+                if raw_text_input:
+                    st.session_state.raw_text = raw_text_input
+                    st.session_state.parsed_data = parse_shopify_export(raw_text_input)
+                    st.session_state.missing_info_flags = st.session_state.parsed_data["missing_info"]
+                    subject, message = generate_medium_risk_email(st.session_state.parsed_data)
+                    st.session_state.generated_subject = subject
+                    st.session_state.generated_email_body = message
+                    st.session_state.current_step = "generate_medium_risk"
+                    st.rerun()
+                else:
+                    st.warning("Please paste order details first")
+
+    with col_right:
+        st.markdown("""
+        <div style='background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem;'>
+            <h2 style='margin-top: 0; color: white;'>✉️ Email Preview</h2>
+            <p style='color: #94a3b8; font-size: 0.9rem; margin: 0;'>Click Copy to grab each section</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.session_state.generated_email_body:
+            # Status badge
+            if st.session_state.missing_info_flags and st.session_state.current_step == "generate_standard":
+                st.markdown("""
+                    <div class="warning-card">
+                        ⚠️ Missing: """ + ", ".join(st.session_state.missing_info_flags) + """
+                    </div>
+                """, unsafe_allow_html=True)
+            elif st.session_state.current_step == "generate_high_risk":
+                st.markdown("""<div class="warning-card">🚨 HIGH-RISK EMAIL</div>""", unsafe_allow_html=True)
+            elif st.session_state.current_step == "generate_return":
+                st.markdown("""<div class="info-card">↩️ RETURN REQUEST</div>""", unsafe_allow_html=True)
+            elif st.session_state.current_step == "generate_medium_risk":
+                st.markdown("""<div class="warning-card">🔍 VERIFICATION REQUIRED</div>""", unsafe_allow_html=True)
+            else:
+                st.markdown("""<div class="success-card">✓ READY TO SEND</div>""", unsafe_allow_html=True)
+
+            st.markdown("<h4>Recipient Email</h4>", unsafe_allow_html=True)
+            st.markdown(f"""
+                <div class="data-display-box">
+                    <span>{st.session_state.parsed_data.get('email_address', 'N/A')}</span>
+                    <button class="copy-button" id="copyEmailBtn" onclick="copyToClipboard(
+                        '{st.session_state.parsed_data.get('email_address', 'N/A').replace("'", "\\'")}', 'copyEmailBtn'
+                    )">Copy</button>
+                </div>
+            """, unsafe_allow_html=True)
+
+            st.markdown("<h4>Subject Line</h4>", unsafe_allow_html=True)
+            st.markdown(f"""
+                <div class="data-display-box">
+                    <span>{st.session_state.generated_subject}</span>
+                    <button class="copy-button" id="copySubjectBtn" onclick="copyToClipboard(
+                        '{st.session_state.generated_subject.replace("'", "\\'")}', 'copySubjectBtn'
+                    )">Copy</button>
+                </div>
+            """, unsafe_allow_html=True)
+
+            st.markdown("<h4>Email Body</h4>", unsafe_allow_html=True)
+            st.code(st.session_state.generated_email_body, language="text")
+            
+            js_safe_email_body = json.dumps(st.session_state.generated_email_body)
+            st.markdown(f"""
+                <div style="text-align: right; margin-top: -0.8rem; margin-bottom: 1rem;">
+                    <button class="copy-button" id="copyBodyBtn" onclick="copyToClipboard(
+                        {js_safe_email_body}, 'copyBodyBtn'
+                    )">Copy Email Body</button>
+                </div>
+            """, unsafe_allow_html=True)
+
+            # Show extracted data in an expander
+            with st.expander("📊 View Extracted Data", expanded=False):
+                if st.session_state.current_step == "generate_standard":
+                    st.markdown(f"""
+                        <div class="extracted-data-card">
+                            <div class="field-row">
+                                <span class="field-label">Customer Name:</span>
+                                <span class="field-value-display">{st.session_state.parsed_data.get('customer_name', '[Not Found]')}</span>
+                            </div>
+                            <div class="field-row">
+                                <span class="field-label">Order Number:</span>
+                                <span class="field-value-display">{st.session_state.parsed_data.get('order_number', '[Not Found]')}</span>
+                            </div>
+                            <div class="field-row">
+                                <span class="field-label">Phone:</span>
+                                <span class="field-value-display">{st.session_state.parsed_data.get('phone_number', '[Not Found]')}</span>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+
+                    if st.session_state.parsed_data.get("items"):
+                        st.markdown("<h4>Order Items</h4>", unsafe_allow_html=True)
+                        for item in st.session_state.parsed_data["items"]:
+                            st.markdown(f"""
+                                <div class="order-item">
+                                    <div class="item-detail"><span class="label">Product:</span> <span class="value">{item.get('product_name', 'N/A')}</span></div>
+                                    <div class="item-detail"><span class="label">Style Code:</span> <span class="value">{item.get('style_code', 'N/A')}</span></div>
+                                    <div class="item-detail"><span class="label">Size:</span> <span class="value">{item.get('size', 'Size Not Found')}</span></div>
+                                    <div class="item-detail"><span class="label">Quantity:</span> <span class="value">{item.get('quantity', 1)}</span></div>
+                                </div>
+                            """, unsafe_allow_html=True)
+
+            st.button("🔄 Start New Order", on_click=reset_app_state, use_container_width=True)
+        else:
+            st.markdown("""
+                <div style='background: #0f172a; border: 1px dashed #334155; border-radius: 8px; padding: 3rem; text-align: center;'>
+                    <p style='color: #94a3b8; font-size: 1rem; margin: 0;'>👈 Paste your order on the left and choose an email type</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+with tab2:
+    st.markdown("""<span class='section-label'>→ Batch Processing</span>""", unsafe_allow_html=True)
+    st.subheader("📦 Shopify Orders Extractor")
 
     raw_text = st.text_area(
-        "Paste the Shopify Orders page text here",
-        height=450
+        "Paste Shopify Orders",
+        height=350,
+        placeholder="Paste the Shopify orders page text here...",
+        key="batch_orders_textarea"
     )
 
     def parse_orders(text):
@@ -758,26 +997,22 @@ with st.expander("Online Orders Report Automation"):
         for block in blocks:
             order = name = amount = None
 
-            # Order number (ONLY # + digits)
             order_match = re.search(r"#\d+", block)
             if order_match:
                 order = order_match.group(0)
 
-            # Amount (must be valid currency)
             amount_match = re.search(r"\$[\d,]+\.\d{2}", block)
             if amount_match:
                 amount = float(
                     amount_match.group(0).replace("$", "").replace(",", "")
                 )
 
-            # Customer name (line after "1 item" or "2 items")
             name_match = re.search(r"\d+\sitems?\s*\n([^\n]+)", block)
             if name_match:
                 candidate = name_match.group(1).strip()
                 if "$" not in candidate and len(candidate) > 1:
                     name = candidate
 
-            # Only keep rows that fully parsed
             if order and name and amount is not None:
                 rows.append({
                     "Order Number": order,
@@ -789,237 +1024,37 @@ with st.expander("Online Orders Report Automation"):
 
         return pd.DataFrame(rows), warnings
 
-    if st.button("Parse Orders"):
-        df, warnings = parse_orders(raw_text)
-
-        if df.empty:
-            st.error("No valid orders could be extracted.")
-        else:
-            styled_df = (
-                df.style
-                .set_properties(
-                    subset=["Order Number", "Customer Name"],
-                    **{"text-align": "center"}
-                )
-                .set_properties(
-                    subset=["Amount ($)"],
-                    **{"text-align": "right"}
-                )
-            )
-
-            st.subheader("Extracted Orders")
-            st.dataframe(styled_df, use_container_width=True)
-
-            st.download_button(
-                "Download CSV",
-                df.to_csv(index=False),
-                file_name="shopify_orders.csv",
-                mime="text/csv"
-            )
-
-        if warnings:
-            st.subheader("Notes")
-            for w in warnings:
-                st.warning(w)
-
-# Create two columns for the main layout
-col_left, col_right = st.columns(2)
-
-with col_left:
-    st.subheader("Paste Order Export")
-    st.markdown('<div style="font-size: 0.9rem; color: #555; margin-bottom: 1rem;">Copy the entire order details from Shopify and paste below. We\'ll extract the data automatically.</div>', unsafe_allow_html=True)
-
-    raw_text_input = st.text_area(
-        "Order Details",
-        height=350,
-        value=st.session_state.raw_text,
-        placeholder="Paste your complete Shopify order export here...",
-        key="raw_text_input_main"
-    )
-
-    col_buttons_input = st.columns(4)
-    with col_buttons_input[0]:
-        if st.button("✓ Confirmation", use_container_width=True):
-            if raw_text_input:
-                st.session_state.raw_text = raw_text_input
-                st.session_state.parsed_data = parse_shopify_export(raw_text_input)
-                st.session_state.missing_info_flags = st.session_state.parsed_data["missing_info"] # Re-assign missing flags
-                
-                subject, message = generate_standard_email(st.session_state.parsed_data)
-                st.session_state.generated_subject = subject
-                st.session_state.generated_email_body = message
-                st.session_state.current_step = "generate_standard" # Keep track of which email type was generated
-                st.rerun()
-            else:
-                st.warning("Please paste the order export text to generate an email.")
-    with col_buttons_input[1]:
-        if st.button("⚠️ High-Risk", use_container_width=True):
-            if raw_text_input:
-                st.session_state.raw_text = raw_text_input
-                st.session_state.parsed_data = parse_shopify_export(raw_text_input)
-                st.session_state.missing_info_flags = st.session_state.parsed_data["missing_info"] # Re-assign missing flags
-                
-                subject, message = generate_high_risk_email(st.session_state.parsed_data)
-                st.session_state.generated_subject = subject
-                st.session_state.generated_email_body = message
-                st.session_state.current_step = "generate_high_risk" # Keep track of which email type was generated
-                st.rerun()
-            else:
-                st.warning("Please paste the order export text to generate a high-risk email.")
-    with col_buttons_input[2]:
-        if st.button("↩️ Return", use_container_width=True):
-            if raw_text_input:
-                st.session_state.raw_text = raw_text_input
-                st.session_state.parsed_data = parse_shopify_export(raw_text_input) # Parse to get customer name
-                st.session_state.missing_info_flags = st.session_state.parsed_data["missing_info"] # Re-assign missing flags
-                
-                subject, message = generate_return_email(st.session_state.parsed_data)
-                st.session_state.generated_subject = subject
-                st.session_state.generated_email_body = message
-                st.session_state.current_step = "generate_return"
-                st.rerun()
-            else:
-                st.warning("Please paste the order export text to generate a return email.")
-    with col_buttons_input[3]:
-        if st.button("🔍 Medium-Risk", use_container_width=True):
-            if raw_text_input:
-                st.session_state.raw_text = raw_text_input
-                st.session_state.parsed_data = parse_shopify_export(raw_text_input)
-                st.session_state.missing_info_flags = st.session_state.parsed_data["missing_info"]
-                subject, message = generate_medium_risk_email(st.session_state.parsed_data)
-                st.session_state.generated_subject = subject
-                st.session_state.generated_email_body = message
-                st.session_state.current_step = "generate_medium_risk"
-                st.rerun()
-            else:
-                st.warning("Please paste the order export text to generate a medium-risk email.")
+    col_batch_1, col_batch_2 = st.columns([2, 1])
     
-    st.button("Reset Form", on_click=reset_app_state, use_container_width=True)
+    with col_batch_1:
+        if st.button("Parse Orders", use_container_width=True, key="btn_parse"):
+            df, warnings = parse_orders(raw_text)
 
-
-with col_right:
-    st.subheader("Generated Email")
-    st.markdown('<div style="font-size: 0.9rem; color: #555; margin-bottom: 1rem;">Your generated email will appear here. Click the Copy buttons to copy each section.</div>', unsafe_allow_html=True)
-    
-    # Conditionally display content based on whether an email has been generated
-    if st.session_state.generated_email_body:
-        # Display info/warning/success cards (MOVED TO TOP)
-        if st.session_state.missing_info_flags and st.session_state.current_step == "generate_standard":
-            missing_text = ", ".join(st.session_state.missing_info_flags)
-            st.markdown(f"""
-                <div class="warning-card">
-                    <span style="font-size: 1.2rem;">⚠️</span>
-                    <strong>Missing Information:</strong> Could not automatically extract: {missing_text}.
-                    Please verify the generated email and manually add/correct these details.
-                </div>
-            """, unsafe_allow_html=True)
-        elif st.session_state.current_step == "generate_high_risk":
-            st.markdown("""
-                <div class="warning-card">
-                    <span style="font-size: 1.2rem;">🚨</span>
-                    This is the email for high-risk order cancellations. Please review carefully before sending.
-                </div>
-            """, unsafe_allow_html=True)
-        elif st.session_state.current_step == "generate_return":
-            st.markdown("""
-                <div class="info-card">
-                    <span style="font-size: 1.2rem;">↩️</span>
-                    This is the return mail template. Ensure the customer name is correct.
-                </div>
-            """, unsafe_allow_html=True)
-        elif st.session_state.current_step == "generate_medium_risk":
-            st.markdown("""
-                <div class="warning-card">
-                    <span style="font-size: 1.2rem;">🟡</span>
-                    This is the email for medium-risk order verification. Please review before sending.
-                </div>
-            """, unsafe_allow_html=True)
-        else: # For standard with no missing info
-            st.markdown("""
-                <div class="success-card">
-                    <span style="font-size: 1.2rem;">✅</span>
-                    Email generated successfully! Ready to copy and send.
-                </div>
-            """, unsafe_allow_html=True)
-
-        # Display recipient email
-        st.markdown("<h4>📧 Recipient Email:</h4>", unsafe_allow_html=True)
-        st.markdown(f"""
-            <div class="data-display-box">
-                <span>{st.session_state.parsed_data.get('email_address', 'N/A')}</span>
-                <button class="copy-button" id="copyEmailBtn" onclick="copyToClipboard(
-                    '{st.session_state.parsed_data.get('email_address', 'N/A').replace("'", "\\'")}', 'copyEmailBtn'
-                )">Copy</button>
-            </div>
-        """, unsafe_allow_html=True)
-
-        # Display email subject
-        st.markdown("<h4>📨 Subject:</h4>", unsafe_allow_html=True)
-        st.markdown(f"""
-            <div class="data-display-box">
-                <span>{st.session_state.generated_subject}</span>
-                <button class="copy-button" id="copySubjectBtn" onclick="copyToClipboard(
-                    '{st.session_state.generated_subject.replace("'", "\\'")}', 'copySubjectBtn'
-                )">Copy</button>
-            </div>
-        """, unsafe_allow_html=True)
-
-        # Display email body
-        st.markdown("<h4>📝 Email Body:</h4>", unsafe_allow_html=True)
-        st.code(st.session_state.generated_email_body, language="text")
-        
-        js_safe_email_body = json.dumps(st.session_state.generated_email_body)
-        st.markdown(f"""
-            <div style="text-align: right; margin-top: -0.8rem; margin-bottom: 0.8rem;">
-                <button class="copy-button" id="copyBodyBtn" onclick="copyToClipboard(
-                    {js_safe_email_body}, 'copyBodyBtn'
-                )">Copy Email Body</button>
-            </div>
-        """, unsafe_allow_html=True)
-
-        # Display extracted information card (only for standard email, or if user wants to see it for others)
-        if st.session_state.current_step == "generate_standard":
-            st.markdown(f"""
-                <div class="extracted-data-card">
-                    <h3><span style="font-size: 1.2rem;">🔍</span> Additional Order Details</h3>
-                    <div class="field-row">
-                        <span class="field-label">Customer Name:</span>
-                        <span class="field-value-display">{st.session_state.parsed_data.get('customer_name', '[Not Found]')}</span>
-                    </div>
-                    <div class="field-row">
-                        <span class="field-label">Order Number:</span>
-                        <span class="field-value-display">{st.session_state.parsed_data.get('order_number', '[Not Found]')}</span>
-                    </div>
-                    <div class="field-row">
-                        <span class="field-label">Phone:</span>
-                        <span class="field-value-display">{st.session_state.parsed_data.get('phone_number', '[Not Found]')}</span>
-                    </div>
-                    <h4>Order Items:</h4>
-            """, unsafe_allow_html=True)
-
-            if st.session_state.parsed_data.get("items"):
-                for item in st.session_state.parsed_data["items"]:
-                    st.markdown(f"""
-                        <div class="order-item">
-                            <div class="item-detail"><span class="label">Product:</span> <span class="value">{item.get('product_name', 'N/A')}</span></div>
-                            <div class="item-detail"><span class="label">Style Code:</span> <span class="value">{item.get('style_code', 'N/A')}</span></div>
-                            <div class="item-detail"><span class="label">Size:</span> <span class="value">{item.get('size', 'Size Not Found')}</span></div>
-                            <div class="item-detail"><span class="label">Quantity:</span> <span class="value">{item.get('quantity', 1)}</span></div>
-                        </div>
-                    """, unsafe_allow_html=True)
+            if df.empty:
+                st.error("❌ No valid orders could be extracted.")
             else:
-                st.markdown("""<div class="info-card">No items extracted.</div>""", unsafe_allow_html=True)
+                styled_df = (
+                    df.style
+                    .set_properties(
+                        subset=["Order Number", "Customer Name"],
+                        **{"text-align": "center"}
+                    )
+                    .set_properties(
+                        subset=["Amount ($)"],
+                        **{"text-align": "right"}
+                    )
+                )
 
-            st.markdown("</div>", unsafe_allow_html=True) # Close extracted-data-card
+                st.subheader("Extracted Orders")
+                st.dataframe(styled_df, use_container_width=True)
 
-        # Always show "Start New Order" button on the right side if an email has been generated
-        st.button("🔁 Start New Order", on_click=reset_app_state, use_container_width=True)
-    else:
-        # Placeholder message when no email has been generated yet, now using custom card style
-        st.markdown("""
-            <div class="info-card" style="min-height: 500px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <span style="font-size: 2.2rem; margin-bottom: 0.7rem;">✨</span>
-                <p style="font-size: 1rem; font-weight: 600;">Your generated email will appear here.</p>
-                <p style="color: var(--text-medium); font-size: 0.85rem;">Paste your order details on the left and click 'Generate Email' to see the magic!</p>
-            </div>
-        """, unsafe_allow_html=True)
+                st.download_button(
+                    "⬇️ Download CSV",
+                    df.to_csv(index=False),
+                    file_name="shopify_orders.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
+
+            if warnings:
+                st.warning(f"⚠️ {len(warnings)} order(s) skipped due to incomplete data")
